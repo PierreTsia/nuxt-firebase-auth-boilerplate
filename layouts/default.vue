@@ -1,40 +1,114 @@
 <template>
-  <div class="container">
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-      <div class="flex-table">
-        <div class="flex-table-item flex-table-item-primary">
-          <nuxt-link class="navbar-item" to="/"><strong>Home</strong></nuxt-link>
+  <div class="container-fluid">
+    <nav class="navbar is-info" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <nuxt-link class="navbar-item" to="/">
+          <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+        </nuxt-link>
+
+        <a role="button" @click="toggleNavBar" 
+          :class="{'navbar-burger': true, 'burger': true,  'is-active': this.navBarActive}" 
+          aria-label="menu" aria-expanded="false" 
+          data-target="defaultLayout__navbar">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="defaultLayout__navbar" :class="{'navbar-menu': true, 'is-active': navBarActive }" refs="navbar-menu">
+        <div class="navbar-start">
+          <nuxt-link class="navbar-item" to="/">Home</nuxt-link>
+          <nuxt-link v-if="isAuthenticated" class="navbar-item" to="/chat">Chat</nuxt-link>
+          <nuxt-link v-if="isAuthenticated" class="navbar-item" to="/account">Profile</nuxt-link>
         </div>
-        <div class="flex-table-item text-right" v-cloak>
-          <nuxt-link v-if="user" class="navbar-item" to="/account" v-text="user.email"></nuxt-link>
-          <nuxt-link v-else class="navbar-item" to="/account/login">Login</nuxt-link>
+
+        <div class="navbar-end">
+          <div v-if="isAuthenticated" class="navbar-item">
+             <div class="user__avatar">
+              <img class="avatar--pic" :src="this.account.image"/> 
+              <span class="avatar--name">{{this.account.displayName}}</span>
+            </div>
+          </div>
+          <div class="navbar-item">
+           
+
+            <div class="buttons">
+                <nuxt-link  v-if="!isAuthenticated" class="button is-danger" to="/account/signup">Sign Up</nuxt-link>
+                <nuxt-link  v-if="!isAuthenticated" class="button is-primary" to="/account/login">Login</nuxt-link>
+                <button @click="signOut" v-else class="button is-rounded is-primary" to="/account/login">
+                  <span>Log out </span>
+                  <IconLogout class="icon-normak icon-white"/>
+                </button>
+                
+            </div>
+          </div>
         </div>
       </div>
     </nav>
+
+
     <nuxt/>
+
+
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from "vuex";
+import {IconLogin, IconLogout} from '~/components/utils/icons'
 
 export default {
-  computed: mapState([
-    'user'
-  ])
-}
+  components: {
+    IconLogin, 
+    IconLogout
+  },
+  data() {
+    return {
+      navBarActive: false
+    };
+  },
+  methods: {
+    toggleNavBar() {
+      this.navBarActive = !this.navBarActive;
+    },
+    signOut() {
+      console.log("poeut");
+      this.$store
+        .dispatch("userLogout")
+        .then(() => {
+          this.$router.push("/account/login");
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+  },
+  computed: {
+    ...mapState(["user", "account"]),
+    ...mapGetters(["isAuthenticated"]),
+    navBarIsActive() {
+      return this.navBarActive;
+    }
+  }
+};
 </script>
 
-<style lang="css">
-.flex-table {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.flex-table-item {
-  flex: 1;
-}
-.flex-table-item-primary {
-  flex: 3;
+<style lang="scss">
+.navbar {
+  padding: 10px;
+  height: 80px;
+  .user__avatar{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .avatar--pic{
+    height: 28px;
+    width:28px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  }
+  
 }
 </style>

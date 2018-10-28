@@ -3,18 +3,23 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: 'Nuxt Firebase Auth',
+    title: "Nuxt Firebase Auth",
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'An example of using Nuxt with Firebase to auth users without a server' }
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        hid: "description",
+        name: "description",
+        content:
+          "An example of using Nuxt with Firebase to auth users without a server"
+      }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
       {
-        rel: 'stylesheet',
-        type: 'text/css',
-        href: '/primer.css'
+        rel: "stylesheet",
+        type: "text/css",
+        href: "/primer.css"
       }
     ]
   },
@@ -22,27 +27,28 @@ module.exports = {
    ** Global CSS
    */
   css: [
-    '~/assets/css/style.css'
+    "~/assets/css/style.css",
+    { src: "bulma/bulma.sass", lang: "sass" },
+    { src: "font-awesome/scss/font-awesome.scss", lang: "scss" }
   ],
   /*
    ** Site Modules
    */
-  modules: [
-    ['@nuxtjs/pwa', { icon: false }]
-  ],
+  modules: [["@nuxtjs/pwa", { icon: false }], "nuxt-material-design-icons"],
   /*
   ** Customize the progress bar color
   */
-  loading: { color: '#24292e' },
+  loading: { color: "#24292e" },
   /*
    ** Router config
    */
   router: {
     // middleware: 'check-auth'
+    middleware: "authenticated"
   },
   plugins: [
     {
-      src: '~/plugins/auth',
+      src: "~/plugins/auth",
       ssr: false
     }
   ],
@@ -50,25 +56,21 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    vendor: [
-      'firebase',
-      'firebase-auth',
-      'vuexfire'
-    ],
+    vendor: ["firebase", "firebase-auth", "vuexfire"],
     // put CSS in files instead of JS bundles
     extractCSS: true,
     /*
     ** Run ESLint on save
     */
-    extend (config, ctx) {
+    extend(config, ctx) {
       if (ctx.dev && ctx.isClient) {
         config.module.rules.push({
-          enforce: 'pre',
+          enforce: "pre",
           test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
+          loader: "eslint-loader",
           exclude: /(node_modules)/
-        })
+        });
       }
     }
   }
-}
+};

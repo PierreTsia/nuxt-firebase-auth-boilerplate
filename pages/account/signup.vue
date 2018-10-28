@@ -1,22 +1,20 @@
 <template>
-  <div>
-    <div class="columns">
-      <div class="one-half column centered">
-        <div class="hero">
-          <div class="hero-body">
-            <h1 class="title">nuxt firebase auth</h1>
-            <h2 class="subtitle">Sign up for nuxt firebase auth to start using the API</h2>
+    <div class="signup columns">
+      <div class=" column is-one-third centered">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">
+              Signup
+            </p>
+            <nuxt-link class="card-header-icon"   to="/account/login">Log in</nuxt-link>
+          </header>
+          <div class="card-content">
+            <div class="content">
+              <SignupForm/>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="columns">
-      <div class="one-half column centered">
-        <div class="four-fifths">
-          <SignupForm />
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -41,3 +39,12 @@ export default {
   ])
 }
 </script>
+
+<style lang="scss" scoped>
+.signup {
+  margin-top: 100px
+}
+
+
+
+</style>

@@ -7,9 +7,9 @@ function createNewAccount(user) {
     .database()
     .ref(`accounts/${user.uid}`)
     .set({
-      displayName: user.displayName || user.email.split("@")[0], // use part of the email as a username
+      displayName: user.displayName || user.email.split("@")[0],
       email: user.email,
-      image: user.newImage || "/images/default-profile.png" // supply a default profile image for all users
+      image: user.newImage || "/images/default-profile.png"
     });
 }
 
@@ -17,14 +17,18 @@ const createStore = () => {
   return new Vuex.Store({
     state: {
       user: null,
-      account: null
+      account: null,
+      messages: []
     },
     getters: {
       isAuthenticated(state) {
         return !!state.user;
-      }
+      },
+      getById: state => messageId => state.messages[messageId],
+ 
     },
     actions: {
+      // User
       setAccountRef: firebaseAction(({ bindFirebaseRef }, path) => {
         return bindFirebaseRef("account", firebase.database().ref(path));
       }),
@@ -52,7 +56,7 @@ const createStore = () => {
           .signInWithPopup(provider)
           .then(result => {
             createNewAccount({
-              newImage: result.additionalUserInfo.profile.picture, // just use their existing user image to start
+              newImage: result.additionalUserInfo.profile.picture,
               ...result.user
             });
             return commit("setUser", result.user);
@@ -71,7 +75,7 @@ const createStore = () => {
           .then(result => {
             console.log("TCL: userGithubLogin -> result", result);
             createNewAccount({
-              newImage: result.additionalUserInfo.profile.avatar_url, // just use their existing user image to start
+              newImage: result.additionalUserInfo.profile.avatar_url,
               ...result.user
             });
             return commit("setUser", result.user);
@@ -111,13 +115,76 @@ const createStore = () => {
           .update({
             image
           });
-      }
+      },
+
+      // chat
+      setMessagesRef: firebaseAction(({ bindFirebaseRef }, path) => {
+        return bindFirebaseRef("messages", firebase.database().ref(path));
+      }),
+
+      postMessage({state, commit}, messageData){
+        const newPostKey = firebase.database().ref().child('message').push().key
+        firebase.database().ref('chat').child(`messages/${newPostKey}`).set({
+          authorName: state.account.displayName,
+          authorId: state.user.uid,
+          content: messageData,
+          authorImage : state.account.image,
+          date: Date.now(),
+          messageId: newPostKey
+        });
+      },
+
+      fetchMessages({ state, commit }) {
+        return firebase
+          .database()
+          .ref("messages")
+          .on("value", (snapshot)=> {
+              return commit("setMessages", snapshot.val());
+          })
+      },
+
+      likeMessage({state, commit}, messageId){
+        return firebase
+        .database()
+        .ref('chat')
+        .child(`messages/${messageId}/likes`)
+        .push(state.user.uid)
+      },
+
+      removeLikeMessage({state, commit}, {messageId, likeId}){
+        return firebase
+        .database()
+        .ref('chat')
+        .child(`messages/${messageId}/likes/${likeId}`)
+        .remove()
+      },
+
+      dislikeMessage({state, commit}, messageId){
+        return firebase
+          .database()
+          .ref('chat')
+          .child(`messages/${messageId}/dislikes`)
+          .push(state.user.uid)
+      },
+
+        removeDislikeMessage({state, commit}, {messageId, dislikeId}){
+        console.log("store", dislikeId)
+        return firebase
+        .database()
+        .ref('chat')
+        .child(`messages/${messageId}/dislikes/${dislikeId}`)
+        .remove()
+      },        
     },
     mutations: {
       ...firebaseMutations,
       setUser(state, user) {
         state.user = user;
         return this.dispatch("setAccountRef", `accounts/${state.user.uid}`);
+      },
+      setMessages(state, messages) {
+        state.messages = messages;
+        return this.dispatch("setMessagesRef", "chat/messages")
       }
     }
   });

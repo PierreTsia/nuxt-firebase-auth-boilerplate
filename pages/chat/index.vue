@@ -1,5 +1,5 @@
 <template>
-  <div class="chatRoom container">
+  <div class="chatRoom container is-fluid">
     <div class="chatRoom__feed">
       <ChatFeed/>
     </div>
@@ -23,6 +23,9 @@ export default {
     return {
       message: "Welcome in chat room"
     };
+  },
+  mounted(){
+    this.$store.dispatch('fetchMessages')
   }
 };
 </script>
@@ -33,11 +36,9 @@ export default {
   flex-direction: column;
 }
 .chatRoom__feed {
-  border: 1px solid green;
-  height: 900px;
+  height: 850px;
 }
 .chatRoom__input {
-  border: 1px solid yellow;
   flex-grow: 1;
   display: flex;
   flex-direction: column;

@@ -23,11 +23,11 @@
           <nuxt-link v-if="isAuthenticated" class="navbar-item" to="/account">Profile</nuxt-link>
         </div>
 
-        <div class="navbar-end">
+        <div  class="navbar-end">
           <div v-if="isAuthenticated" class="navbar-item">
              <div class="user__avatar">
-              <img class="avatar--pic" :src="this.account.image"/> 
-              <span class="avatar--name">{{this.account.displayName}}</span>
+              <img v-if="this.account" class="avatar--pic" :src="this.account.image"/> 
+              <span v-if="this.account" class="avatar--name">{{this.account.displayName}}</span>
             </div>
           </div>
           <div class="navbar-item">
@@ -98,6 +98,7 @@ export default {
 .navbar {
   padding: 10px;
   height: 80px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.9);
   .user__avatar{
     display: flex;
     justify-content: space-around;

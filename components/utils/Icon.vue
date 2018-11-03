@@ -12,14 +12,16 @@ export default {
 .icon {
   display: inline-block;
 }
-.icon-normal,
+
 .icon-default {
   stroke: black;
   fill: black;
+}
+
+.icon-normal {
   height: 18px;
   width: 18px;
 }
-
 .icon-big {
   height: 50px;
   width: 50px;

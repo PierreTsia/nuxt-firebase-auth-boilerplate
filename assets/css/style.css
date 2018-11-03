@@ -6,6 +6,15 @@
   content: "loading…";
 }
 
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.2s;
+}
+.page-enter,
+.page-leave-active {
+  opacity: 0;
+}
+
 table {
   table-layout: fixed;
   width: 100%;
@@ -22,7 +31,8 @@ table th[align="left"] {
   text-align: left;
 }
 
-table th[align="center"], table th[align="middle"] {
+table th[align="center"],
+table th[align="middle"] {
   text-align: center;
 }
 

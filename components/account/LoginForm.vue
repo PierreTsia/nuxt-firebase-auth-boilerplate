@@ -50,16 +50,12 @@
 </template>
 
 <script>
-import GoogleButton from "~/components/account/3rd-party/GoogleButton.vue";
-import GithubButton from "~/components/account/3rd-party/GithubButton.vue";
-import IconGithub from "~/components/utils/icons/github.vue"
-import IconGoogle from "~/components/utils/icons/google.vue"
+import IconGithub from "~/components/utils/icons/github.vue";
+import IconGoogle from "~/components/utils/icons/google.vue";
 
 export default {
   name: "LoginForm",
   components: {
-    GoogleButton,
-    GithubButton,
     IconGithub,
     IconGoogle
   },
@@ -94,11 +90,11 @@ export default {
           this.formError = error;
         });
     },
-    handleGithubSignIn(){
-      this.$store.dispatch('userGithubLogin')
+    handleGithubSignIn() {
+      this.$store.dispatch("userGithubLogin");
     },
-    handleGoogleSignIn(){
-      this.$store.dispatch('userGoogleLogin')
+    handleGoogleSignIn() {
+      this.$store.dispatch("userGoogleLogin");
     },
     resetError() {
       this.formError = "";
@@ -115,14 +111,13 @@ export default {
 }
 
 .loginForm {
-  .emailPassword__button{
+  .emailPassword__button {
     margin: 20px 0px 0px 0px;
   }
-  button.has-icon{
-    span{
+  button.has-icon {
+    span {
       margin: 0px 8px;
     }
   }
-
 }
 </style>

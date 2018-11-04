@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="hero is-info">
+    <section v-if="account" class="hero is-info">
       <div class="hero-body columns centered">
          <div class="column is-one-fifth">
             <div class="heroAvatar centered">

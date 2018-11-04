@@ -1,6 +1,7 @@
 import Vuex from "vuex";
 import firebase from "firebase";
 import { firebaseMutations, firebaseAction } from "vuexfire";
+import _ from "lodash";
 
 function createNewAccount(user) {
   return firebase
@@ -21,11 +22,9 @@ const createStore = () => {
       messages: []
     },
     getters: {
-      isAuthenticated(state) {
-        return !!state.user;
-      },
-      getById: state => messageId => state.messages[messageId],
- 
+      isAuthenticated: state => !!state.user,
+      allMessages: state =>
+        _.compact(Object.values(_.omit(state.messages, [".key"])))
     },
     actions: {
       // User
@@ -73,7 +72,6 @@ const createStore = () => {
           .auth()
           .signInWithPopup(provider)
           .then(result => {
-            console.log("TCL: userGithubLogin -> result", result);
             createNewAccount({
               newImage: result.additionalUserInfo.profile.avatar_url,
               ...result.user
@@ -122,59 +120,85 @@ const createStore = () => {
         return bindFirebaseRef("messages", firebase.database().ref(path));
       }),
 
-      postMessage({state, commit}, messageData){
-        const newPostKey = firebase.database().ref().child('message').push().key
-        firebase.database().ref('chat').child(`messages/${newPostKey}`).set({
-          authorName: state.account.displayName,
-          authorId: state.user.uid,
-          content: messageData,
-          authorImage : state.account.image,
-          date: Date.now(),
-          messageId: newPostKey
-        });
+      postMessage({ state, commit }, messageData) {
+        const newPostKey = firebase
+          .database()
+          .ref()
+          .child("message")
+          .push().key;
+        firebase
+          .database()
+          .ref("chat")
+          .child(`messages/${newPostKey}`)
+          .set({
+            authorName: state.account.displayName,
+            authorId: state.user.uid,
+            content: messageData,
+            authorImage: state.account.image,
+            date: Date.now(),
+            messageId: newPostKey
+          });
       },
 
       fetchMessages({ state, commit }) {
         return firebase
           .database()
           .ref("messages")
-          .on("value", (snapshot)=> {
-              return commit("setMessages", snapshot.val());
-          })
+          .on("value", snapshot => {
+            return commit("setMessages", snapshot.val());
+          });
       },
 
-      likeMessage({state, commit}, messageId){
-        return firebase
-        .database()
-        .ref('chat')
-        .child(`messages/${messageId}/likes`)
-        .push(state.user.uid)
-      },
-
-      removeLikeMessage({state, commit}, {messageId, likeId}){
-        return firebase
-        .database()
-        .ref('chat')
-        .child(`messages/${messageId}/likes/${likeId}`)
-        .remove()
-      },
-
-      dislikeMessage({state, commit}, messageId){
+      likeMessage({ state, commit }, messageId) {
         return firebase
           .database()
-          .ref('chat')
-          .child(`messages/${messageId}/dislikes`)
-          .push(state.user.uid)
+          .ref("chat")
+          .child(`messages/${messageId}/likes`)
+          .push(state.user.uid);
       },
 
-        removeDislikeMessage({state, commit}, {messageId, dislikeId}){
-        console.log("store", dislikeId)
+      removeLikeMessage({ state, commit }, { messageId, likeId }) {
         return firebase
-        .database()
-        .ref('chat')
-        .child(`messages/${messageId}/dislikes/${dislikeId}`)
-        .remove()
-      },        
+          .database()
+          .ref("chat")
+          .child(`messages/${messageId}/likes/${likeId}`)
+          .remove();
+      },
+
+      dislikeMessage({ state, commit }, messageId) {
+        return firebase
+          .database()
+          .ref("chat")
+          .child(`messages/${messageId}/dislikes`)
+          .push(state.user.uid);
+      },
+
+      removeDislikeMessage({ state, commit }, { messageId, dislikeId }) {
+        console.log("store", dislikeId);
+        return firebase
+          .database()
+          .ref("chat")
+          .child(`messages/${messageId}/dislikes/${dislikeId}`)
+          .remove();
+      },
+
+      updateMessage({ state, commit }, { messageId, content }) {
+        console.log("TCL: updateMessage -> content", content);
+        console.log("TCL: updateMessage -> messageId", messageId);
+        return firebase
+          .database()
+          .ref("chat")
+          .child(`messages/${messageId}`)
+          .update({ content });
+      },
+
+      deleteMessage({ store, commit }, messageId) {
+        return firebase
+          .database()
+          .ref("chat")
+          .child(`messages/${messageId}`)
+          .remove();
+      }
     },
     mutations: {
       ...firebaseMutations,
@@ -184,7 +208,7 @@ const createStore = () => {
       },
       setMessages(state, messages) {
         state.messages = messages;
-        return this.dispatch("setMessagesRef", "chat/messages")
+        return this.dispatch("setMessagesRef", "chat/messages");
       }
     }
   });

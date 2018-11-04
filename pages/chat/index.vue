@@ -1,11 +1,9 @@
 <template>
-  <div class="chatRoom container is-fluid">
-    <div class="chatRoom__feed">
+  <div class="chatRoom">
+    <div class="chatRoom__chatFeed container">
       <ChatFeed/>
     </div>
-    <div class="chatRoom__input">
       <ChatInput/>
-    </div>
   </div>
   
 </template>
@@ -24,23 +22,14 @@ export default {
       message: "Welcome in chat room"
     };
   },
-  mounted(){
-    this.$store.dispatch('fetchMessages')
+  mounted() {
+    this.$store.dispatch("fetchMessages");
   }
 };
 </script>
-<style scoped>
-.chatRoom {
-  height: calc(100vh - 80px);
-  display: flex;
-  flex-direction: column;
-}
-.chatRoom__feed {
-  height: 850px;
-}
-.chatRoom__input {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+<style lang="scss" scoped>
+.chatRoom__chatFeed {
+  max-height: 800px;
+  overflow: auto;
 }
 </style>

@@ -11,11 +11,6 @@ export default function({ isServer, redirect, route, store }) {
   ) {
     redirect("/account/login");
   }
-
-  /*   if (!isAuthenticated(store) && route.name === "account") {
-    redirect("/account/login");
-  } */
-
   // the server can never be authed for a single account
   if (isServer && !firebase.apps.length) {
     redirect("/account/login");

@@ -1,54 +1,72 @@
 <template>
-  <div class="chatFeed">
-    <ChatMessage v-if="!noMessages" v-for="message in displayMessages" :key="message.messageId" :message="message"/>
-    <div v-else class="no__message container">
+  <div class="chatFeed mt-2">
+    <div v-if="noMessages" class="no__message container">
       <div class="notification has-text-info has-text-centered">
         There are <strong>no messages</strong> yet!  Shoot the first one.
       </div>
-    </div> 
-    
-    
+    </div>
+    <div ref="messagesFeed" v-else>
+     <ChatMessage
+      :id="message.messageId"  
+      v-for="message in allMessages" 
+      :key="message.messageId" 
+      :message="message"/> 
+    </div>
   </div>
 </template>
 <script>
 import ChatMessage from "~/components/chat/ChatMessage.vue";
-import { mapState } from 'vuex';
-import _ from 'lodash'
+import { mapGetters } from "vuex";
+
+// import { scroller } from "vue-scrollto/src/scrollTo";
 
 export default {
   name: "ChatFeed",
-  data(){
+  data() {
     return {
-    }
+      lastChildDiv: null
+    };
   },
   components: {
     ChatMessage
   },
   computed: {
-    ...mapState(['messages']),
-    displayMessages(){
-      return _.omit(this.messages, ['.key'])
-    },
-    noMessages(){
-      return this.messages['.value'] === null
+    ...mapGetters(["allMessages"]),
+
+    noMessages() {
+      return !this.allMessages.length;
     }
   },
- 
+  watch: {
+    allMessages(curr, old) {
+      if (curr.length > old.length) {
+        this.updateLastChildDiv();
+      }
+    }
+  },
+  updated() {
+    // this.updateLastChildDiv();
+    console.log(this.$el);
+  },
+  methods: {
+    updateLastChildDiv() {
+      if (this.$refs.messagesFeed) {
+        this.$nextTick(() => {
+          this.lastChildDiv = this.$refs.messagesFeed.lastChild;
+          console.log(this.lastChildDiv);
+          this.lastChildDiv.scrollIntoView();
+        });
+      }
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
 .chatFeed {
-  width: 100%;
-  padding: 0;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  box-shadow: inset 0px 0px 10px rgba(0,0,0,0.3);
-  .no__message{
+  .no__message {
     height: 50vh;
-    padding: 20px
-  } 
+    padding: 20px;
+  }
 }
 
 .title {

@@ -8,9 +8,9 @@ import IconLike from "./like";
 import IconUnlike from "./unlike";
 import IconReply from "./reply";
 import IconComment from "./comment";
-
-
-
+import IconCheck from "./check";
+import IconClose from "./close";
+import IconDelete from "./delete";
 
 export {
   IconGithub,
@@ -22,5 +22,8 @@ export {
   IconLike,
   IconUnlike,
   IconReply,
-  IconComment
+  IconComment,
+  IconCheck,
+  IconClose,
+  IconDelete
 };

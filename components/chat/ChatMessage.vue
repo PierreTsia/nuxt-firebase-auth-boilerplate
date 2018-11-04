@@ -112,29 +112,6 @@
           </footer>
         </div>
       </div>
-            <!-- <div :class="{'modal': true, 'is-active': modalIsActive}">
-        <div class="modal-background"></div>
-        <div class="modal-content">
-          <div class="card">
-          <header class="card-header">
-            <p class="card-header-title">
-              Delete your message
-            </p>
-          </header>
-          <div class="card-content">
-            <div class="content">
-              Do you really want to delete your message? 
-              
-            </div>
-          </div>
-          <footer class="card-footer">
-            <span @click="cancelModalClick" class="card-footer-item">Cancel</span>
-            <span @click="confirmDeleteClick" class="card-footer-item">confirm</span>
-          </footer>
-        </div>
-        </div>
-        <button class="modal-close is-large" aria-label="close"></button>
-      </div> -->
     </div>
   </div>  
 </template>

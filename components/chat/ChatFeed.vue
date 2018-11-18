@@ -2,17 +2,25 @@
   <div class="chatFeed mt-2">
     <div v-if="noMessages" class="no__message container">
       <div class="notification has-text-info has-text-centered">
-        There are <strong>no messages</strong> yet!  Shoot the first one.
+        There are
+        <strong>no messages</strong> yet! Shoot the first one.
       </div>
     </div>
     <div ref="messagesFeed" v-else>
-     <ChatMessage
-      :id="message.messageId"  
-      v-for="message in allMessages" 
-      :key="message.messageId" 
-      :message="message"/> 
+      <ChatMessage @imageClick="activateModal" :id="message.messageId" v-for="message in allMessages" :key="message.messageId" :message="message" />
+    </div>
+
+    <div :class="{'modal' : true, 'is-active': modalIsActive}">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <p class="image">
+          <img :src="modalImgUrl" alt="">
+        </p>
+      </div>
+      <button @click="modalIsActive = false" class="modal-close is-large" aria-label="close"></button>
     </div>
   </div>
+
 </template>
 <script>
 import ChatMessage from "~/components/chat/ChatMessage.vue";
@@ -24,25 +32,27 @@ export default {
   name: "ChatFeed",
   data() {
     return {
-      lastChildDiv: null
+      lastChildDiv: null,
+      modalIsActive: false,
+      modalImgUrl:''
     };
   },
   components: {
-    ChatMessage
+    ChatMessage,
   },
   computed: {
     ...mapGetters(["allMessages"]),
 
     noMessages() {
       return !this.allMessages.length;
-    }
+    },
   },
   watch: {
     allMessages(curr, old) {
       if (curr.length > old.length) {
         this.updateLastChildDiv();
       }
-    }
+    },
   },
   updated() {
     // this.updateLastChildDiv();
@@ -57,8 +67,13 @@ export default {
           this.lastChildDiv.scrollIntoView();
         });
       }
+    },
+    activateModal(imgUrl){
+      console.log(imgUrl)
+      this.modalIsActive = true;
+      this.modalImgUrl = imgUrl
     }
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>

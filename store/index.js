@@ -133,7 +133,8 @@ const createStore = () => {
           .set({
             authorName: state.account.displayName,
             authorId: state.user.uid,
-            content: messageData,
+            content: messageData.text,
+            img: messageData.img,
             authorImage: state.account.image,
             date: Date.now(),
             messageId: newPostKey
@@ -190,6 +191,20 @@ const createStore = () => {
           .ref("chat")
           .child(`messages/${messageId}`)
           .update({ content });
+      },
+
+      deleteMessageImg({ state, commit }, { messageId, path }) {
+        console.log("​deleteMessageImg -> messageId", messageId)
+        return firebase
+          .database()
+          .ref('chat')
+          .child(`messages/${messageId}/img`)
+          .remove()
+          .then(() => {
+            const ref = firebase.storage().ref(path)
+            ref.delete()
+              .then(snapshot => console.log(snapshot))
+          })
       },
 
       deleteMessage({ store, commit }, messageId) {

@@ -11,6 +11,8 @@ import IconComment from "./comment";
 import IconCheck from "./check";
 import IconClose from "./close";
 import IconDelete from "./delete";
+import IconStop from "./stop";
+
 
 export {
   IconGithub,
@@ -25,5 +27,6 @@ export {
   IconComment,
   IconCheck,
   IconClose,
-  IconDelete
+  IconDelete,
+  IconStop
 };

@@ -1,5 +1,14 @@
 <template>
   <div class="chatFeed mt-2">
+      <div :class="{'modal' : true, 'is-active': modalIsActive}">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <p class="image">
+          <img :src="modalImgUrl" alt="">
+        </p>
+      </div>
+      <button @click="modalIsActive = false" class="modal-close is-large" aria-label="close"></button>
+    </div>
     <div v-if="noMessages" class="no__message container">
       <div class="notification has-text-info has-text-centered">
         There are
@@ -9,18 +18,7 @@
     <div ref="messagesFeed" v-else>
       <ChatMessage @imageClick="activateModal" :id="message.messageId" v-for="message in allMessages" :key="message.messageId" :message="message" />
     </div>
-
-    <div :class="{'modal' : true, 'is-active': modalIsActive}">
-      <div class="modal-background"></div>
-      <div class="modal-content">
-        <p class="image">
-          <img :src="modalImgUrl" alt="">
-        </p>
-      </div>
-      <button @click="modalIsActive = false" class="modal-close is-large" aria-label="close"></button>
-    </div>
   </div>
-
 </template>
 <script>
 import ChatMessage from "~/components/chat/ChatMessage.vue";

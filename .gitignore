@@ -12,7 +12,6 @@ dist
 
 #firebase functions
 firebase.json
-function/package-lock.json
 
 
 # hide the compiled service worker

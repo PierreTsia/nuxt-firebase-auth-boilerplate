@@ -11,7 +11,6 @@ npm-debug.log
 dist
 
 #firebase functions
-functions
 firebase.json
 
 

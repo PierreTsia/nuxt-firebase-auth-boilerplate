@@ -10,10 +10,6 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "@google-cloud/vision": "^0.5.0",
-    "child-process-promise": "^2.2.0",
-    "mkdirp": "^0.5.1",
-    "mkdirp-promise": "^4.0.0",
     "bad-words": "^1.3.1",
     "capitalize-sentence": "^0.1.2",
     "firebase-admin": "~6.0.0",

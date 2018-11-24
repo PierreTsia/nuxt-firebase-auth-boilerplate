@@ -121,6 +121,7 @@ const createStore = () => {
       }),
 
       postMessage({ state, commit }, messageData) {
+        console.log("​postMessage -> messageData", messageData)
         const newPostKey = firebase
           .database()
           .ref()
@@ -146,6 +147,7 @@ const createStore = () => {
           .database()
           .ref("messages")
           .on("value", snapshot => {
+            console.log(snapshot.val())
             return commit("setMessages", snapshot.val());
           });
       },
@@ -190,7 +192,7 @@ const createStore = () => {
           .database()
           .ref("chat")
           .child(`messages/${messageId}`)
-          .update({ content });
+          .update({ content, flags: false })
       },
 
       deleteMessageImg({ state, commit }, { messageId, path }) {

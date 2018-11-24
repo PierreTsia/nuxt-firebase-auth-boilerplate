@@ -18,21 +18,22 @@
                     {{formatDate(message.date)}} ago
                   </small>
                   <small v-if="message.moderated" class="ml-3">
-                   Moderation : <span v-for="flag in message.flags" class="ml-1 tag is-danger">{{flag}}</span>
+                    Moderation :
+                    <span v-for="flag in message.flags" class="ml-1 tag is-danger">{{flag}}</span>
                   </small>
                 </div>
                 <br>
                 <span v-if="!isEditing">
-                
-                  <span>
+
+                  <span style="white-space: pre-line;">
                     {{message.content}}
                   </span>
-                  <div class="mt-1 mb-1" v-if="message.img && message.img.url.length">
+                  <div class="mt-1 mb-1" v-if="message.img && message.img.fullPath.length">
                     <img @click="handleImageClick" class="messageImg" :src="message.img.url" alt="">
                   </div>
                 </span>
                 <span v-else>
-                  <input v-model="newContent" class="input" type="text" placeholder="Text input">
+                  <textarea v-model="newContent" class="input" type="text" placeholder="Text input"></textarea>
                   <div class="mt-1 mb-1" v-if="message.img && message.img.url.length">
                     <img class="messageImg" :src="message.img.url" alt="">
                     <span @click="handleDeleteImageClick">

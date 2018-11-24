@@ -51,6 +51,7 @@ module.exports = {
       src: "~/plugins/auth",
       ssr: false
     }
+
   ],
   /*
   ** Build configuration
@@ -59,6 +60,11 @@ module.exports = {
     vendor: ["firebase", "firebase-auth", "vuexfire"],
     // put CSS in files instead of JS bundles
     extractCSS: true,
+    postcss: {
+      plugins: {
+        "postcss-custom-properties": false
+      }
+    },
     /*
     ** Run ESLint on save
     */

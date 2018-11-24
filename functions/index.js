@@ -13,7 +13,7 @@ const database = admin.database();
 
 exports.moderateChatFunction = functions.database.ref('chat/messages/{messageId}').onWrite((change) => {
   // Pass whatever tasks to child functions so they have access to it
-  moderateChatFunction.handler(change, database);
+  return moderateChatFunction.handler(change, database);
 });
 
 /* exports.barFunction = functions.database.ref('/users').onWrite(event => {

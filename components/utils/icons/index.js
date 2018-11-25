@@ -12,6 +12,8 @@ import IconCheck from "./check";
 import IconClose from "./close";
 import IconDelete from "./delete";
 import IconStop from "./stop";
+import IconView from "./view";
+
 
 
 export {
@@ -28,5 +30,6 @@ export {
   IconCheck,
   IconClose,
   IconDelete,
-  IconStop
+  IconStop,
+  IconView
 };

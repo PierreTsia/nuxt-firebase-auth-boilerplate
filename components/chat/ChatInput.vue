@@ -1,23 +1,26 @@
 <template>
-  <div class="chatInput is-full p-4">
-    <textarea v-model="messageText" class="mb-4 textarea" placeholder="e.g. Hello world"></textarea>
-    <img class="imgPreview" v-if="img.url.length" :src="img.url" alt="">
-    <div class="columns">
-      <div class="column">
-        <input @click="handleSubmitMessage" class="button is-primary is-large" type="submit" value="Send">
+  <div class="columns column is-half chatInput mt-3">
+    <div class="column is-half">
+      <textarea v-model="messageText" class="mb-4 textarea" placeholder="e.g. Hello world"></textarea>
+    </div>
+    <div class="column is-one-fourth">
+     <div id="preview">
+          <img v-if="tempUrl" :src="tempUrl" />
       </div>
-      <div class="column">
-        <input id="imageInput" class="input" type="file" accept="image/*" placeholder="Image" v-on:change="uploadMessageImage" ref="imageInput">
-        <a @click="handleUploadImageClick" type="file" accept="image/*" :class="{'button': true,  'is-large': true,  'is-link': true, 'is-loading': isLoading}">
-          <IconUpload v-if="!isLoading" class="icon icon-white" />
+    </div>
+    <div class="column is-one-fourth">
+      <input @click="handleSubmitMessage" class="mb-2 button is-primary is-large is-fullwidth" type="submit" value="Send">
+      <input id="imageInput" class="input" type="file" accept="image/*" placeholder="Image" v-on:change="uploadMessageImage" ref="imageInput">
+        <a @click="handleUploadImageClick" type="file" accept="image/*" :class="{'button': true,  'is-large': true,  'is-link': true, 'is-loading': false, 'is-fullwidth': true}">
+          <IconUpload class="icon icon-white" />
         </a>
-      </div>
+    </div>    
     </div>
 
   </div>
 </template>
 <script>
-import firebase from "firebase";
+// import firebase from "firebase";
 import { mapState, mapActions } from "vuex";
 import { IconUpload } from "~/components/utils/icons";
 
@@ -31,6 +34,7 @@ export default {
       message: "chatInput",
       messageText: "",
       isLoading: false,
+      tempUrl: null,
       img: {
         url: "",
         fullPath: "",
@@ -43,18 +47,19 @@ export default {
   methods: {
     ...mapActions(["postMessage"]),
     handleSubmitMessage() {
-      if (!this.messageText.length) {
+      if (!this.messageText.length && !this.$refs.imageInput.value) {
         return;
       }
+      const img = this.$refs.imageInput.files[0];
+      // console.log("exact link", tempRef.child(`images/${img.name}`));
+
       this.postMessage({
         text: this.messageText,
-        img: {
-          url: this.img.url.length ? this.img.url : null,
-          fullPath: this.img.fullPath.length ? this.img.fullPath : null,
-        },
+        img,
       });
+
       this.messageText = "";
-      this.img.url = "";
+      this.tempUrl = "";
       this.$refs.imageInput.value = null;
     },
     handleUploadImageClick() {
@@ -65,7 +70,9 @@ export default {
       this.isLoading = true;
       const img = this.$refs.imageInput.files[0];
       console.log("​uploadMessageImage -> img", img);
-      const ref = firebase.storage().ref(`chat/${this.user.uid}/`);
+      this.tempUrl = URL.createObjectURL(img);
+      console.log("​uploadMessageImage -> this.URL", this.URL);
+      /* const ref = firebase.storage().ref(`temp/${this.user.uid}/`);
       ref
         .child(`images/${img.name}`)
         .put(img)
@@ -79,7 +86,7 @@ export default {
         .catch(err => {
           console.warn("Error uploading new profile image");
           console.error(err);
-        });
+        }); */
     },
   },
 };
@@ -88,7 +95,9 @@ export default {
 <style lang="scss"scoped>
 .chatInput {
   height: 100%;
-  flex-grow: 1;
+  background-color: white;
+  border-radius: 6px;
+    box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
 }
 
 #imageInput {

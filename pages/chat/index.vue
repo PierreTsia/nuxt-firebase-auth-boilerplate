@@ -1,9 +1,10 @@
 <template>
-  <div class="chatRoom">
+  <div class="chatRoom container">
+      <ChatInput/>
+    
     <div class="chatRoom__chatFeed">
       <ChatFeed/>
     </div>
-      <ChatInput/>
   </div>
   
 </template>
@@ -29,7 +30,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .chatRoom__chatFeed {
-  max-height: 800px;
   overflow: auto;
 }
 </style>

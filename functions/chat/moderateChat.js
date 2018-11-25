@@ -4,9 +4,7 @@ const badWordsFilter = new Filter();
 const frenchBadWords = require('french-badwords-list')
 badWordsFilter.addWords(frenchBadWords.array)
 
-// The Firebase Admin SDK to access the Firebase Realtime Database.
 exports.handler = function (change, database) {
-  // some function
   const message = change.after.val();
   console.log("retrieved message", message)
 

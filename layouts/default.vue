@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="main__wrapper container-fluid">
     <nav class="navbar is-info" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <nuxt-link class="navbar-item" to="/">
@@ -89,6 +89,9 @@ export default {
 </script>
 
 <style lang="scss">
+.main__wrapper{
+  background-color: #F6F7F7
+}
 .navbar {
   padding: 10px;
   height: 80px;

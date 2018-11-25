@@ -2,6 +2,8 @@
 
 //  Declare all child functions here
 const moderateChatFunction = require('./chat/moderateChat');
+const moderateImage = require('./images/moderateImage');
+
 
 // Note: these tasks need to be initialized in index.js and
 // NOT in child functions:
@@ -16,7 +18,8 @@ exports.moderateChatFunction = functions.database.ref('chat/messages/{messageId}
   return moderateChatFunction.handler(change, database);
 });
 
-/* exports.barFunction = functions.database.ref('/users').onWrite(event => {
-  // Pass whatever tasks to child functions so they have access to it
-  barFunction.handler(database);
-}); */
+exports.moderateImage = functions.storage.object().onFinalize((object) => {
+  // ...
+  return moderateImage.handler(object, database);
+
+});

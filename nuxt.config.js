@@ -50,7 +50,12 @@ module.exports = {
     {
       src: "~/plugins/auth",
       ssr: false
+    },
+    {
+      src:'~/plugins/vue-toggle',
+      ssr: false,
     }
+    
 
   ],
   /*

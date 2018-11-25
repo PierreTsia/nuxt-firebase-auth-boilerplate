@@ -120,13 +120,14 @@ const createStore = () => {
         return bindFirebaseRef("messages", firebase.database().ref(path));
       }),
 
-      postMessage({ state, commit }, messageData) {
+      async postMessage({ state, commit }, messageData) {
         console.log("​postMessage -> messageData", messageData)
         const newPostKey = firebase
           .database()
           .ref()
           .child("message")
           .push().key;
+
         firebase
           .database()
           .ref("chat")
@@ -135,11 +136,36 @@ const createStore = () => {
             authorName: state.account.displayName,
             authorId: state.user.uid,
             content: messageData.text,
-            img: messageData.img,
             authorImage: state.account.image,
             date: Date.now(),
             messageId: newPostKey
           });
+
+        if (messageData.img) {
+          // const img = {}
+          const storageRef = firebase.storage().ref(`chat/${newPostKey}/`);
+          const storedImg = await storageRef
+            .child(`images/${messageData.img.name}`)
+            .put(messageData.img)
+
+          console.log("​postMessage -> storedImg", storedImg)
+
+          const img = { url: storedImg.downloadURL, fullPath: storedImg.ref.fullPath }
+          console.log("​postMessage -> img", img)
+
+          firebase
+            .database()
+            .ref("chat")
+            .child(`messages/${newPostKey}`)
+            .update({
+              img,
+              imgModerated: false
+            });
+
+        }
+
+
+
       },
 
       fetchMessages({ state, commit }) {

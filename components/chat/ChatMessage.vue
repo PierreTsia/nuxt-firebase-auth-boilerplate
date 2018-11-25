@@ -17,10 +17,15 @@
                   <small>
                     {{formatDate(message.date)}} ago
                   </small>
-                  <small v-if="message.moderated" class="ml-3">
+                  <small v-if="messageTextFlags.length" class="ml-3">
                     Moderation :
-                    <span v-for="flag in message.flags" class="ml-1 tag is-danger">{{flag}}</span>
+                    <span v-for="(flag, index) in messageTextFlags" :key="index" class="ml-1 tag is-danger">{{flag}}</span>
                   </small>
+                 <div v-if="imgFlags.length" class="switch field ml-5">
+                   
+                   <toggle-button :value="true" :sync="true" :labels="{checked: 'ON', unchecked: 'OFF'}" :name="'Offensive image filter'" :color="{checked: '#26c55b', unchecked: '#ff2f57'}" v-model="hideImage" />
+                    
+                  </div>
                 </div>
                 <br>
                 <span v-if="!isEditing">
@@ -29,7 +34,23 @@
                     {{message.content}}
                   </span>
                   <div class="mt-1 mb-1" v-if="message.img && message.img.fullPath.length">
-                    <img @click="handleImageClick" class="messageImg" :src="message.img.url" alt="">
+
+                    <img v-show="!imgFlags.length || !hideImage" @click="handleImageClick" class="messageImg" :src="message.img.url" alt="">
+                    <div class="img_filter" v-show="imgFlags.length && hideImage">
+                      <small class="ml-3">
+                        <span class="block">
+                          <span class="flags__container">
+                            <span v-for="(flag, index) in imgFlags" 
+                              :key="index" 
+                              class="ml-1 tag is-danger img_flags">
+                              {{flag}}
+                            </span>
+                          </span>
+                        </span>
+                      </small>
+
+                    </div>
+
                   </div>
                 </span>
                 <span v-else>
@@ -136,6 +157,7 @@ import {
   IconClose,
   IconDelete,
   IconStop,
+  IconView
 } from "~/components/utils/icons";
 import { distanceInWordsToNow } from "date-fns";
 export default {
@@ -149,12 +171,14 @@ export default {
     IconClose,
     IconDelete,
     IconStop,
+    IconView
   },
   data() {
     return {
       newContent: "",
       isEditing: false,
       modalIsActive: false,
+      hideImage: true,
     };
   },
   props: {
@@ -189,6 +213,15 @@ export default {
     userAlreadyDisliked() {
       return this.dislikesUserIds.includes(this.user.uid);
     },
+
+    messageTextFlags() {
+      return this.message.flags ? [...this.message.flags] : [];
+    },
+    imgFlags() {
+      return this.message.imgFlags && this.message.imgFlags.split("/").length
+        ? [...this.message.imgFlags.split("/")]
+        : [];
+    },
   },
   methods: {
     ...mapActions([
@@ -200,6 +233,8 @@ export default {
       "deleteMessage",
       "deleteMessageImg",
     ]),
+
+  
 
     formatDate(date) {
       return distanceInWordsToNow(date);
@@ -285,7 +320,6 @@ export default {
       this.$emit("imageClick", this.message.img.url);
     },
   },
-  mounted() {},
 };
 </script>
 
@@ -300,8 +334,35 @@ export default {
   font-size: 11px;
 }
 .messageImg {
-  max-width: 100px;
+  max-width: 200px;
   max-height: auto;
   cursor: pointer;
+}
+
+.img_filter {
+  .block {
+    display: flex;
+    background-color: grey;
+    height: 100px;
+    width: 200px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .flags_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .img_flags {
+      max-width: 55px;
+    }
+  }
+}
+
+.switch {
+  flex-grow: 1;
+  display:flex;
+  justify-content: flex-end;
+  alogn-items: center;
 }
 </style>

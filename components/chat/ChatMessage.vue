@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="chatMessage pl-4 pr-4 mt-2 mb-2">
+    <div class="chatMessage  mb-2">
       <div class="box">
 
         <article class="media">
@@ -17,7 +17,7 @@
                   <small>
                     {{formatDate(message.date)}} ago
                   </small>
-                  <small v-if="messageTextFlags.length" class="ml-3">
+                  <small v-if="messageTextFlags.length" class="text_flags ml-3">
                     Moderation :
                     <span v-for="(flag, index) in messageTextFlags" :key="index" class="ml-1 tag is-danger">{{flag}}</span>
                   </small>
@@ -324,6 +324,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.chatMessage{
+  .content{
+    @media screen and(max-width: 800px){
+      font-size: 10px
+    }
+  }
+}
+
+.text_flags{
+  display: flex;
+  align-items:center;
+  @media screen and (max-width: 800px){
+    font-size: 6px;
+    .tag{
+      font-size: 0.60em;
+      max-width: 35px;
+    }
+  }
+}
+
 .content__header {
   display: flex;
   justify-content: flex-start;
@@ -337,6 +358,9 @@ export default {
   max-width: 200px;
   max-height: auto;
   cursor: pointer;
+   @media screen and(max-width: 800px){
+      max-width: 100px !important
+    }
 }
 
 .img_filter {
@@ -348,13 +372,18 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+      @media screen and(max-width: 800px){
+        max-width: 100px !important
+    }
   }
   .flags_container {
     display: flex;
     justify-content: center;
     align-items: center;
+ 
     .img_flags {
       max-width: 55px;
+     
     }
   }
 }

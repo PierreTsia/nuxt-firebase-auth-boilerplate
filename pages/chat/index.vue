@@ -1,10 +1,11 @@
 <template>
-  <div class="chatRoom container">
-      <ChatInput/>
-    
-    <div class="chatRoom__chatFeed">
-      <ChatFeed/>
-    </div>
+  <div class="chatRoom columns p-4">
+      <div class="column is-half-desktop is-12-mobile">
+        <ChatInput/>
+      </div>          
+      <div class="column is-half-desktop is-12-mobile chatRoom__chatFeed">
+        <ChatFeed/>
+      </div>
   </div>
   
 </template>

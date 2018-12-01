@@ -1,5 +1,5 @@
 <template>
-  <div class="columns column is-half chatInput mt-3">
+  <div class="columns column is-12 chatInput mt-2">
     <div class="column is-half">
       <textarea v-model="messageText" class="mb-4 textarea" placeholder="e.g. Hello world"></textarea>
     </div>
@@ -94,7 +94,7 @@ export default {
 
 <style lang="scss"scoped>
 .chatInput {
-  height: 100%;
+  height: 300px;
   background-color: white;
   border-radius: 6px;
     box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);

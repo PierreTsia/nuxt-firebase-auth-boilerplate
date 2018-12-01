@@ -4,18 +4,18 @@
       <textarea v-model="messageText" class="mb-4 textarea" placeholder="e.g. Hello world"></textarea>
     </div>
     <div class="column is-one-fourth">
-     <div id="preview">
-          <img v-if="tempUrl" :src="tempUrl" />
+      <div id="preview">
+        <img v-if="tempUrl" :src="tempUrl" />
       </div>
     </div>
     <div class="column is-one-fourth">
       <input @click="handleSubmitMessage" class="mb-2 button is-primary is-large is-fullwidth" type="submit" value="Send">
       <input id="imageInput" class="input" type="file" accept="image/*" placeholder="Image" v-on:change="uploadMessageImage" ref="imageInput">
-        <a @click="handleUploadImageClick" type="file" accept="image/*" :class="{'button': true,  'is-large': true,  'is-link': true, 'is-loading': false, 'is-fullwidth': true}">
-          <IconUpload class="icon icon-white" />
-        </a>
-    </div>    
+      <a @click="handleUploadImageClick" type="file" accept="image/*" :class="{'button': true,  'is-large': true,  'is-link': true, 'is-loading': false, 'is-fullwidth': true}">
+        <IconUpload class="icon icon-white" />
+      </a>
     </div>
+  </div>
 
   </div>
 </template>
@@ -50,8 +50,9 @@ export default {
       if (!this.messageText.length && !this.$refs.imageInput.value) {
         return;
       }
-      const img = this.$refs.imageInput.files[0];
+      const img = this.$refs.imageInput.files[0] || null;
       // console.log("exact link", tempRef.child(`images/${img.name}`));
+      console.log("​handleSubmitMessage -> this.", this.messageText);
 
       this.postMessage({
         text: this.messageText,
@@ -97,7 +98,7 @@ export default {
   height: 300px;
   background-color: white;
   border-radius: 6px;
-    box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+  box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
 }
 
 #imageInput {

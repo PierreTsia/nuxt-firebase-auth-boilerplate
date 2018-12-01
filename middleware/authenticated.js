@@ -1,6 +1,6 @@
 import firebase from "firebase";
 
-export default function({ isServer, redirect, route, store }) {
+export default function ({ isServer, redirect, route, store }) {
   const isAuthenticated = store => {
     return store && store.state && store.state.user;
   };

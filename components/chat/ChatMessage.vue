@@ -21,10 +21,10 @@
                     Moderation :
                     <span v-for="(flag, index) in messageTextFlags" :key="index" class="ml-1 tag is-danger">{{flag}}</span>
                   </small>
-                 <div v-if="imgFlags.length" class="switch field ml-5">
-                   
-                   <toggle-button :value="true" :sync="true" :labels="{checked: 'ON', unchecked: 'OFF'}" :name="'Offensive image filter'" :color="{checked: '#26c55b', unchecked: '#ff2f57'}" v-model="hideImage" />
-                    
+                  <div v-if="imgFlags.length" class="switch field ml-5">
+
+                    <toggle-button :value="true" :sync="true" :labels="{checked: 'ON', unchecked: 'OFF'}" :name="'Offensive image filter'" :color="{checked: '#26c55b', unchecked: '#ff2f57'}" v-model="hideImage" />
+
                   </div>
                 </div>
                 <br>
@@ -40,9 +40,7 @@
                       <small class="ml-3">
                         <span class="block">
                           <span class="flags__container">
-                            <span v-for="(flag, index) in imgFlags" 
-                              :key="index" 
-                              class="ml-1 tag is-danger img_flags">
+                            <span v-for="(flag, index) in imgFlags" :key="index" class="ml-1 tag is-danger img_flags">
                               {{flag}}
                             </span>
                           </span>
@@ -145,7 +143,7 @@
 
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 // import firebase from "firebase";
 import _ from "lodash";
 import {
@@ -157,7 +155,7 @@ import {
   IconClose,
   IconDelete,
   IconStop,
-  IconView
+  IconView,
 } from "~/components/utils/icons";
 import { distanceInWordsToNow } from "date-fns";
 export default {
@@ -171,7 +169,7 @@ export default {
     IconClose,
     IconDelete,
     IconStop,
-    IconView
+    IconView,
   },
   data() {
     return {
@@ -189,7 +187,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(["user"]),
+    ...mapGetters(["user"]),
     likesUserIds() {
       return this.message.likes ? Object.values(this.message.likes) : [];
     },
@@ -233,8 +231,6 @@ export default {
       "deleteMessage",
       "deleteMessageImg",
     ]),
-
-  
 
     formatDate(date) {
       return distanceInWordsToNow(date);
@@ -324,22 +320,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-.chatMessage{
-  .content{
-    @media screen and(max-width: 800px){
-      font-size: 10px
+.chatMessage {
+  .content {
+    @media screen and(max-width: 800px) {
+      font-size: 10px;
     }
   }
 }
 
-.text_flags{
+.text_flags {
   display: flex;
-  align-items:center;
-  @media screen and (max-width: 800px){
+  align-items: center;
+  @media screen and (max-width: 800px) {
     font-size: 6px;
-    .tag{
-      font-size: 0.60em;
+    .tag {
+      font-size: 0.6em;
       max-width: 35px;
     }
   }
@@ -358,9 +353,9 @@ export default {
   max-width: 200px;
   max-height: auto;
   cursor: pointer;
-   @media screen and(max-width: 800px){
-      max-width: 100px !important
-    }
+  @media screen and(max-width: 800px) {
+    max-width: 100px !important;
+  }
 }
 
 .img_filter {
@@ -372,25 +367,24 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-      @media screen and(max-width: 800px){
-        max-width: 100px !important
+    @media screen and(max-width: 800px) {
+      max-width: 100px !important;
     }
   }
   .flags_container {
     display: flex;
     justify-content: center;
     align-items: center;
- 
+
     .img_flags {
       max-width: 55px;
-     
     }
   }
 }
 
 .switch {
   flex-grow: 1;
-  display:flex;
+  display: flex;
   justify-content: flex-end;
   alogn-items: center;
 }

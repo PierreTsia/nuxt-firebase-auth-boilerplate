@@ -52,10 +52,10 @@ module.exports = {
       ssr: false
     },
     {
-      src:'~/plugins/vue-toggle',
+      src: '~/plugins/vue-toggle',
       ssr: false,
     }
-    
+
 
   ],
   /*

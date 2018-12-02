@@ -29,10 +29,7 @@ export default {
   components: {
     LoginForm,
   },
-  mounted() {
-    console.log("TSSSS");
-    // this.$store.dispatch("setAccountRef");
-  },
+
   watch: {
     // firebase is sometimes slow so we need to account for
     // the user getting authenticated late in the game...

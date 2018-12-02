@@ -27,7 +27,7 @@
 
                   </div>
                 </div>
-                <br> 
+                <br>
                 <span v-if="!isEditing">
 
                   <span style="white-space: pre-line;">
@@ -312,7 +312,6 @@ export default {
       });
     },
     handleImageClick() {
-      console.log("child");
       this.$emit("imageClick", this.message.img.url);
     },
   },

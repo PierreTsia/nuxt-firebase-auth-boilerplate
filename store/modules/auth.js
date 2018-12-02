@@ -1,41 +1,42 @@
-import firebase from "firebase";
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 // import _ from "lodash";
-import { firebaseMutations, firebaseAction } from "vuexfire";
-
+import { firebaseAction } from "vuexfire";
+import { fireDb } from '~/plugins/firebase'
 
 
 
 function createNewAccount(user) {
-  return firebase
-    .database()
-    .ref(`accounts/${user.uid}`)
+  fireDb.collection('accounts')
+    .doc(`${user.uid}`)
     .set({
       displayName: user.displayName || user.email.split("@")[0],
       email: user.email,
       image: user.newImage || "/images/default-profile.png"
-    });
+    })
 }
 
 
 export default {
   state: {
     user: null,
-    account: null,
+    accounts: [],
   },
   getters: {
     isAuthenticated: state => !!state.user,
     user: state => state.user
   },
   mutations: {
-    ...firebaseMutations,
     setUser(state, user) {
       state.user = user;
-      return this.dispatch("setAccountRef", `accounts/${state.user.uid}`);
+
+      // return this.dispatch("setAccountRef");
     },
   },
   actions: {
-    setAccountRef: firebaseAction(({ bindFirebaseRef }, path) => {
-      return bindFirebaseRef("account", firebase.database().ref(path));
+    setAccountsRef: firebaseAction(({ bindFirebaseRef }) => {
+      const ref = fireDb.collection('accounts')
+      bindFirebaseRef('accounts', ref)
     }),
     resetUser({ state }) {
       state.user = null;
@@ -45,7 +46,6 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(account.email, account.password)
         .then(user => {
-          console.log("TCL: userCreate -> user", user);
           return createNewAccount(user);
         });
     },

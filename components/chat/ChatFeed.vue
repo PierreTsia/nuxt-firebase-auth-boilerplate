@@ -16,7 +16,7 @@
       </div>
     </div>
     <div ref="messagesFeed" v-else>
-      <ChatMessage @imageClick="activateModal" :id="message.messageId" v-for="message in allMessages.reverse()" :key="message.messageId" :message="message" />
+      <ChatMessage @imageClick="activateModal" :id="message.messageId" v-for="message in allMessages" :key="message.messageId" :message="message" />
     </div>
   </div>
 </template>
@@ -45,23 +45,9 @@ export default {
       return !this.allMessages.length;
     },
   },
-  watch: {
-    allMessages(curr, old) {
-      if (curr.length > old.length) {
-      }
-    },
-  },
-  mounted() {
-    console.log(this.$refs);
-  },
-  updated() {
-    // this.updateLastChildDiv();
-    console.log(this.$refs);
-    // console.log(this.$el);
-  },
+
   methods: {
     activateModal(imgUrl) {
-      console.log(imgUrl);
       this.modalIsActive = true;
       this.modalImgUrl = imgUrl;
     },

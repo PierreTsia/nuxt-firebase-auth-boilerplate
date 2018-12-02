@@ -67,7 +67,6 @@ export default {
       this.navBarActive = !this.navBarActive;
     },
     signOut() {
-      console.log("poeut");
       this.$store
         .dispatch("userLogout")
         .then(() => {
@@ -89,8 +88,8 @@ export default {
 </script>
 
 <style lang="scss">
-.main__wrapper{
-  background-color: #F6F7F7
+.main__wrapper {
+  background-color: #f6f7f7;
 }
 .navbar {
   padding: 10px;

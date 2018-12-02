@@ -312,7 +312,6 @@ export default {
       });
     },
     handleImageClick() {
-      console.log("child");
       this.$emit("imageClick", this.message.img.url);
     },
   },

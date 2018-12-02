@@ -1,6 +1,7 @@
-import firebase from "firebase";
-import _ from "lodash";
-import { firebaseMutations, firebaseAction } from "vuexfire";
+import { firebaseAction } from "vuexfire";
+import { fireDb } from '~/plugins/firebase'
+import * as firebase from 'firebase'
+import _ from 'lodash'
 
 
 export default {
@@ -8,140 +9,125 @@ export default {
     messages: []
   },
   getters: {
-    allMessages: state =>
-      _.compact(Object.values(_.omit(state.messages, [".key"])))
+    allMessages: state => state.messages
   },
   mutations: {
-    ...firebaseMutations,
-    setMessages(state, messages) {
-      state.messages = messages;
-      return this.dispatch("setMessagesRef", "chat/messages");
-    }
 
   },
   actions: {
-    setMessagesRef: firebaseAction(({ bindFirebaseRef }, path) => {
-      return bindFirebaseRef("messages", firebase.database().ref(path));
+    setMessagesRef: firebaseAction(({ bindFirebaseRef }) => {
+      const ref = fireDb.collection("messages")
+      return bindFirebaseRef("messages", ref);
     }),
 
     async postMessage({ state, rootState, commit }, messageData) {
-      console.log("​postMessage -> rootState", rootState)
-      console.log("​postMessage -> messageData", messageData)
-      const newPostKey = firebase
-        .database()
-        .ref()
-        .child("message")
-        .push().key;
+      const ref = await fireDb.collection('messages').doc()
+      await ref.set({
+        authorName: rootState.auth.user.displayName,
+        authorId: rootState.auth.user.uid,
+        content: messageData.text,
+        authorImage: rootState.auth.user.photoURL,
+        date: Date.now(),
+        messageId: ref.id,
+        likes: [],
+        dislikes: []
 
-      firebase
-        .database()
-        .ref("chat")
-        .child(`messages/${newPostKey}`)
-        .set({
-          authorName: rootState.auth.account.displayName,
-          authorId: rootState.auth.user.uid,
-          content: messageData.text,
-          authorImage: rootState.auth.account.image,
-          date: Date.now(),
-          messageId: newPostKey
-        });
+      })
+
 
       if (messageData.img) {
-        // const img = {}
-        const storageRef = firebase.storage().ref(`chat/${newPostKey}/`);
+        const storageRef = firebase.storage().ref(`chat/${ref.id}/`);
         const storedImg = await storageRef
           .child(`images/${messageData.img.name}`)
           .put(messageData.img)
 
-        console.log("​postMessage -> storedImg", storedImg)
+        const url = await storageRef.child(`images/${messageData.img.name}`).getDownloadURL()
+        const img = await { url, fullPath: storedImg.ref.fullPath }
+        const messageRef = await fireDb.collection('messages').doc(ref.id)
 
-        const img = { url: storedImg.downloadURL, fullPath: storedImg.ref.fullPath }
-        console.log("​postMessage -> img", img)
-
-        firebase
-          .database()
-          .ref("chat")
-          .child(`messages/${newPostKey}`)
+        await messageRef
           .update({
             img,
             imgModerated: false
-          });
+          })
+
       }
     },
 
-    fetchMessages({ state, commit }) {
-      return firebase
-        .database()
-        .ref("messages")
-        .on("value", snapshot => {
-          console.log(snapshot.val())
-          return commit("setMessages", snapshot.val());
-        });
+    async likeMessage({ state, rootState, commit }, messageId) {
+      const userId = rootState.auth.user.uid
+      const docRef = await fireDb.collection("messages")
+        .doc(`/${messageId}`)
+        .get()
+
+      const existingLikes = docRef.data().likes
+
+      return fireDb
+        .collection("messages")
+        .doc(`/${messageId}`)
+        .update({ likes: _.concat(existingLikes, userId) })
+
     },
 
-    likeMessage({ state, rootState, commit }, messageId) {
-      return firebase
-        .database()
-        .ref("chat")
-        .child(`messages/${messageId}/likes`)
-        .push(rootState.auth.user.uid);
+    async removeLikeMessage({ state, rootState, commit }, { messageId, likeId }) {
+      const userId = rootState.auth.user.uid
+      const docRef = await fireDb.collection("messages")
+        .doc(`/${messageId}`)
+        .get()
+
+      const existingLikes = docRef.data().likes
+      return fireDb
+        .collection("messages")
+        .doc(`/${messageId}`)
+        .update({ likes: _.without(existingLikes, userId) })
     },
 
-    removeLikeMessage({ state, commit }, { messageId, likeId }) {
-      return firebase
-        .database()
-        .ref("chat")
-        .child(`messages/${messageId}/likes/${likeId}`)
-        .remove();
+    async dislikeMessage({ state, rootState, commit }, messageId) {
+      const userId = rootState.auth.user.uid
+      const docRef = await fireDb.collection("messages")
+        .doc(`/${messageId}`)
+        .get()
+
+      const existingDislikes = docRef.data().dislikes
+
+      return fireDb
+        .collection("messages")
+        .doc(`/${messageId}`)
+        .update({ dislikes: _.concat(existingDislikes, userId) })
     },
 
-    dislikeMessage({ state, rootState, commit }, messageId) {
-      return firebase
-        .database()
-        .ref("chat")
-        .child(`messages/${messageId}/dislikes`)
-        .push(rootState.auth.user.uid);
-    },
+    async removeDislikeMessage({ state, rootState, commit }, { messageId, dislikeId }) {
+      const userId = rootState.auth.user.uid
+      const docRef = await fireDb.collection("messages")
+        .doc(`/${messageId}`)
+        .get()
 
-    removeDislikeMessage({ state, commit }, { messageId, dislikeId }) {
-      console.log("store", dislikeId);
-      return firebase
-        .database()
-        .ref("chat")
-        .child(`messages/${messageId}/dislikes/${dislikeId}`)
-        .remove();
+      const existingDislikes = docRef.data().dislikes
+      return fireDb
+        .collection("messages")
+        .doc(`/${messageId}`)
+        .update({ dislikes: _.without(existingDislikes, userId) })
     },
 
     updateMessage({ state, commit }, { messageId, content }) {
-      console.log("TCL: updateMessage -> content", content);
-      console.log("TCL: updateMessage -> messageId", messageId);
-      return firebase
-        .database()
-        .ref("chat")
-        .child(`messages/${messageId}`)
+      return fireDb
+        .collection('messages')
+        .doc(messageId)
         .update({ content, flags: false })
     },
 
     deleteMessageImg({ state, commit }, { messageId, path }) {
-      console.log("​deleteMessageImg -> messageId", messageId)
-      return firebase
-        .database()
-        .ref('chat')
-        .child(`messages/${messageId}/img`)
-        .remove()
-        .then(() => {
-          const ref = firebase.storage().ref(path)
-          ref.delete()
-            .then(snapshot => console.log(snapshot))
-        })
+      return fireDb
+        .collection('messages')
+        .doc(messageId)
+        .update({ img: firebase.firestore.FieldValue.delete(), imgModerated: firebase.firestore.FieldValue.delete() })
     },
 
     deleteMessage({ store, commit }, messageId) {
-      return firebase
-        .database()
-        .ref("chat")
-        .child(`messages/${messageId}`)
-        .remove();
+      return fireDb
+        .collection('messages')
+        .doc(messageId)
+        .delete();
     }
   }
 };

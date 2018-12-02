@@ -1,6 +1,6 @@
-import firebase from "firebase";
-import _ from "lodash";
 import { firebaseAction } from "vuexfire";
+import { fireDb } from '~/plugins/firebase'
+import * as firebase from 'firebase'
 
 
 export default {
@@ -8,74 +8,46 @@ export default {
     messages: []
   },
   getters: {
-    allMessages: state =>
-      _.compact(Object.values(_.omit(state.messages, [".key"])))
+    allMessages: state => state.messages
   },
   mutations: {
-    setMessages(state, messages) {
-      state.messages = messages;
-      return this.dispatch("setMessagesRef", "chat/messages");
-    }
 
   },
   actions: {
-    setMessagesRef: firebaseAction(({ bindFirebaseRef }, path) => {
-      return bindFirebaseRef("messages", firebase.database().ref(path));
+    setMessagesRef: firebaseAction(({ bindFirebaseRef }) => {
+      const ref = fireDb.collection("messages")
+      return bindFirebaseRef("messages", ref);
     }),
 
     async postMessage({ state, rootState, commit }, messageData) {
-      console.log("​postMessage -> rootState", rootState)
-      console.log("​postMessage -> messageData", messageData)
-      const newPostKey = firebase
-        .database()
-        .ref()
-        .child("message")
-        .push().key;
+      const ref = await fireDb.collection('messages').doc()
+      await ref.set({
+        authorName: rootState.auth.user.displayName,
+        authorId: rootState.auth.user.uid,
+        content: messageData.text,
+        authorImage: rootState.auth.user.photoURL,
+        date: Date.now(),
+        messageId: ref.id
+      })
 
-      firebase
-        .database()
-        .ref("chat")
-        .child(`messages/${newPostKey}`)
-        .set({
-          authorName: rootState.auth.account.displayName,
-          authorId: rootState.auth.user.uid,
-          content: messageData.text,
-          authorImage: rootState.auth.account.image,
-          date: Date.now(),
-          messageId: newPostKey
-        });
 
       if (messageData.img) {
-        // const img = {}
-        const storageRef = firebase.storage().ref(`chat/${newPostKey}/`);
+        const storageRef = firebase.storage().ref(`chat/${ref.id}/`);
         const storedImg = await storageRef
           .child(`images/${messageData.img.name}`)
           .put(messageData.img)
 
-        console.log("​postMessage -> storedImg", storedImg)
+        const url = await storageRef.child(`images/${messageData.img.name}`).getDownloadURL()
 
-        const img = { url: storedImg.downloadURL, fullPath: storedImg.ref.fullPath }
-        console.log("​postMessage -> img", img)
+        const img = await { url, fullPath: storedImg.ref.fullPath }
 
-        firebase
-          .database()
-          .ref("chat")
-          .child(`messages/${newPostKey}`)
-          .update({
-            img,
-            imgModerated: false
-          });
+        const messageRef = await fireDb.collection('messages').doc(ref.id)
+        await messageRef.update({
+          img,
+          imgModerated: false
+        })
+
       }
-    },
-
-    fetchMessages({ state, commit }) {
-      return firebase
-        .database()
-        .ref("messages")
-        .on("value", snapshot => {
-          console.log(snapshot.val())
-          return commit("setMessages", snapshot.val());
-        });
     },
 
     likeMessage({ state, rootState, commit }, messageId) {

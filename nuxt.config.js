@@ -44,7 +44,7 @@ module.exports = {
    */
   router: {
     // middleware: 'check-auth'
-    middleware: ["authenticated", "bindAccountsRef"]
+    middleware: ["authenticated", "bindAccountsRef", "bindMessagesRef"]
   },
   plugins: [
     {

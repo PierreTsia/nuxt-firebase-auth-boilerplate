@@ -15,7 +15,7 @@ import ChatFeed from "~/components/chat/ChatFeed.vue";
 
 export default {
   name: "chat",
-  middleware: "bindAccountsRef",
+  middleware: "bindMessagesRef",
   components: {
     ChatInput,
     ChatFeed,
@@ -24,11 +24,6 @@ export default {
     return {
       message: "Welcome in chat room",
     };
-  },
-  mounted() {
-    this.$store.dispatch("fetchMessages");
-
-    /*   this.$store.dispatch("setAccountsRef"); */
   },
 };
 </script>

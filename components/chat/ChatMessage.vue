@@ -27,7 +27,7 @@
 
                   </div>
                 </div>
-                <br>
+                <br> 
                 <span v-if="!isEditing">
 
                   <span style="white-space: pre-line;">

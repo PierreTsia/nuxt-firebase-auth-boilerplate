@@ -70,24 +70,8 @@ export default {
       // this.resetFormMessages();
       this.isLoading = true;
       const img = this.$refs.imageInput.files[0];
-      console.log("​uploadMessageImage -> img", img);
       this.tempUrl = URL.createObjectURL(img);
-      console.log("​uploadMessageImage -> this.URL", this.URL);
-      /* const ref = firebase.storage().ref(`temp/${this.user.uid}/`);
-      ref
-        .child(`images/${img.name}`)
-        .put(img)
-        .then(snapshot => {
-          console.log(snapshot);
-          this.img.url = snapshot.downloadURL;
-          this.img.fullPath = snapshot.ref.fullPath;
-          this.isLoading = false;
-        })
-
-        .catch(err => {
-          console.warn("Error uploading new profile image");
-          console.error(err);
-        }); */
+    
     },
   },
 };

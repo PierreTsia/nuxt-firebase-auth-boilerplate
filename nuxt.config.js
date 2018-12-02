@@ -44,12 +44,12 @@ module.exports = {
    */
   router: {
     // middleware: 'check-auth'
-    middleware: "authenticated"
+    middleware: ["authenticated", "bindAccountsRef"]
   },
   plugins: [
     {
-      src: "~/plugins/auth",
-      ssr: false
+      src: "~/plugins/firebase",
+      ssr: true
     },
     {
       src: '~/plugins/vue-toggle',

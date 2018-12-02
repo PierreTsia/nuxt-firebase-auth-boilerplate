@@ -6,9 +6,7 @@
           <p class="card-header-title">
             Login
           </p>
-          <nuxt-link 
-            class="card-header-icon"
-            to="/account/signup">
+          <nuxt-link class="card-header-icon" to="/account/signup">
             Sign up
           </nuxt-link>
         </header>
@@ -29,21 +27,24 @@ import { mapState } from "vuex";
 export default {
   middleware: "anonymous",
   components: {
-    LoginForm
+    LoginForm,
+  },
+  mounted() {
+    console.log("TSSSS");
+    // this.$store.dispatch("setAccountRef");
   },
   watch: {
     // firebase is sometimes slow so we need to account for
     // the user getting authenticated late in the game...
     user(to, from) {
       this.$router.push("/account");
-    }
+    },
   },
-  computed: mapState(["user"])
+  computed: mapState(["user"]),
 };
 </script>
 <style lang="css" scoped>
-.login{
+.login {
   margin-top: 100px;
 }
-
 </style>

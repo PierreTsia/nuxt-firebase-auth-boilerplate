@@ -1,6 +1,6 @@
 import firebase from "firebase";
 import _ from "lodash";
-import { firebaseMutations, firebaseAction } from "vuexfire";
+import { firebaseAction } from "vuexfire";
 
 
 export default {
@@ -12,7 +12,6 @@ export default {
       _.compact(Object.values(_.omit(state.messages, [".key"])))
   },
   mutations: {
-    ...firebaseMutations,
     setMessages(state, messages) {
       state.messages = messages;
       return this.dispatch("setMessagesRef", "chat/messages");

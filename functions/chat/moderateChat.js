@@ -4,8 +4,8 @@ const badWordsFilter = new Filter();
 const frenchBadWords = require('french-badwords-list')
 badWordsFilter.addWords(frenchBadWords.array)
 
-exports.handler = function (change, database) {
-  const message = change.after.val();
+exports.handler = function (message, db) {
+
   console.log("retrieved message", message)
 
   if (message) {
@@ -14,11 +14,10 @@ exports.handler = function (change, database) {
 
     // Update the Firebase DB with checked message.
     console.log('Message has been moderated. Saving to DB: ', moderatedMessage);
-    return change.after.ref.update({
+    return db.collection('messages').doc(message.messageId).update({
       content: moderatedMessage.content,
       moderated: moderatedMessage.flags.length > 0,
       flags: moderatedMessage.flags || []
-
     });
   }
   return null;

@@ -1,25 +1,33 @@
 'use strict';
 
+
 //  Declare all child functions here
 const moderateChatFunction = require('./chat/moderateChat');
-const moderateImage = require('./images/moderateImage');
+// const moderateImage = require('./images/moderateImage');
 
 
 // Note: these tasks need to be initialized in index.js and
 // NOT in child functions:
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+const firebase = admin.initializeApp(functions.config().firebase);
+const db = firebase.firestore()
 
-const database = admin.database();
 
-exports.moderateChatFunction = functions.database.ref('chat/messages/{messageId}').onWrite((change) => {
-  // Pass whatever tasks to child functions so they have access to it
-  return moderateChatFunction.handler(change, database);
+exports.onCreateMessage = functions.firestore.document('messages/{messageId}').onCreate((snap, context) => {
+  const message = snap.data();
+  return moderateChatFunction.handler(message, db);
 });
 
-exports.moderateImage = functions.storage.object().onFinalize((object) => {
+
+exports.onUpdateMessage = functions.firestore.document('messages/{messageId}').onUpdate((change, context) => {
+  const message = change.after.data();
+  return moderateChatFunction.handler(message, db);
+});
+
+
+/* exports.moderateImage = functions.storage.object().onFinalize((object) => {
   // ...
-  return moderateImage.handler(object, database);
+  return moderateImage.handler(object);
 
-});
+}); */

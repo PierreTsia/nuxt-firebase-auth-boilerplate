@@ -3,7 +3,7 @@
 
 //  Declare all child functions here
 const moderateChatFunction = require('./chat/moderateChat');
-// const moderateImage = require('./images/moderateImage');
+const moderateImage = require('./images/moderateImage');
 
 
 // Note: these tasks need to be initialized in index.js and
@@ -26,8 +26,8 @@ exports.onUpdateMessage = functions.firestore.document('messages/{messageId}').o
 });
 
 
-/* exports.moderateImage = functions.storage.object().onFinalize((object) => {
+exports.moderateImage = functions.storage.object().onFinalize((object) => {
   // ...
-  return moderateImage.handler(object);
+  return moderateImage.handler(object, db);
 
-}); */
+}); 

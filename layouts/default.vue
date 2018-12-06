@@ -17,7 +17,7 @@
         <div class="navbar-start">
           <nuxt-link class="navbar-item" to="/">Home</nuxt-link>
           <nuxt-link v-if="isAuthenticated" class="navbar-item" to="/chat">Chat</nuxt-link>
-          <nuxt-link v-if="isAuthenticated" class="navbar-item" to="/account">Profile</nuxt-link>
+          <nuxt-link v-if="isAuthenticated" class="navbar-item" to="/profiles">Profiles</nuxt-link>
         </div>
 
         <div class="navbar-end">

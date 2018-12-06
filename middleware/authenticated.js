@@ -9,7 +9,7 @@ export default function ({ isServer, redirect, route, store }) {
 
   if (
     !isAuthenticated(store) &&
-    (route.name === "chat" || route.name === "account")
+    (route.name === "chat" || route.name === "profiles")
   ) {
     redirect("/account/login");
   }

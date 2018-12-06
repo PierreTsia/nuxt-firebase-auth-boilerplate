@@ -7,44 +7,34 @@ const vision = require('@google-cloud/vision')();
 // const fs = require('fs');
 
 
-exports.handler = function (object, database) {
+exports.handler = function (object, db) {
   const messageId = object.name.split('/')[1]
-  /*  [ 'chat', '-LSA4NJnRVmkwvy1LMuO', 'images', 'test.png' ] */
-
   const file = gcs.bucket(object.bucket).file(object.name);
   return vision.detectSafeSearch(file).then((data) => {
     const safeSearch = data[0];
+    let msg;
+    db.collection('messages').doc(messageId).get()
+      .then(snapshot => {
+        msg = snapshot.data()
+        const flags = []
+        for (let flag in safeSearch) {
+          if (safeSearch[flag] === true) {
+            flags.push(flag)
+          }
+        }
+        if (flags.length) {
+          return db.collection('messages').doc(msg.messageId)
+            .update({
+              imgModerated: true,
+              imgFlags: flags.join('/'),
+            })
+        }
+        return db.collection('messages').doc(msg.messageId)
+          .update({
+            imgModerated: true,
+            imgFlags: "",
+          })
 
-    const msgRef = database.ref(`chat/message/${messageId}`)
-    msgRef.once('value').then(snapshot => console.log(snapshot.DataSnapshot))
-    msgRef.once('value').then(DataSnapshot => console.log(DataSnapshot))
-
-
-    console.log('SafeSearch results on image', safeSearch);
-    const flags = []
-
-    for (let flag in safeSearch) {
-      if (safeSearch[flag] === true) {
-        flags.push(flag)
-      }
-    }
-
-    if (flags.length) {
-      return database
-        .ref("chat")
-        .child(`messages/${messageId}`)
-        .update({
-          imgModerated: true,
-          imgFlags: flags.join('/'),
-        })
-      // return blurImage(object.name, object.bucket, object.metadata);
-    }
-    return database
-      .ref("chat")
-      .child(`messages/${messageId}`)
-      .update({
-        imgModerated: true,
-        imgFlags: "",
       })
   });
 

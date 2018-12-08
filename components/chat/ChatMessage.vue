@@ -205,11 +205,11 @@ export default {
     },
 
     userAlreadyLiked() {
-      return this.likesUserIds.includes(this.user.uid);
+      return this.likesUserIds.includes(this.user.userId);
     },
 
     userAlreadyDisliked() {
-      return this.dislikesUserIds.includes(this.user.uid);
+      return this.dislikesUserIds.includes(this.user.userId);
     },
 
     messageTextFlags() {
@@ -237,7 +237,7 @@ export default {
     },
 
     currentUserIsAuthor(authorId) {
-      return authorId === this.user.uid;
+      return authorId === this.user.userId;
     },
 
     handleDeleteClick() {

@@ -1,7 +1,4 @@
 <template>
-  <div>
-    {{message}}
-  </div>
 
 </template>
 <script>
@@ -17,4 +14,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.profiles {
+  margin-top: 5px;
+  min-height: 90vh;
+}
 </style>

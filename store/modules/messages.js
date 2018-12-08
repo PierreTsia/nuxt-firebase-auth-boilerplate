@@ -9,7 +9,8 @@ export default {
     messages: []
   },
   getters: {
-    allMessages: state => state.messages
+    allMessages: state => state.messages,
+    sortedMessages: state => state.messages.sort((msgA, msgB) => msgA.date < msgB.date ? 1 : -1),
   },
   mutations: {
 
@@ -20,13 +21,14 @@ export default {
       return bindFirebaseRef("messages", ref);
     }),
 
-    async postMessage({ state, rootState, commit }, messageData) {
+    async postMessage({ state, rootGetters, commit }, messageData) {
+      console.log("​postMessage -> rootGetters", rootGetters)
       const ref = await fireDb.collection('messages').doc()
       await ref.set({
-        authorName: rootState.auth.user.displayName,
-        authorId: rootState.auth.user.uid,
+        authorName: rootGetters.userAccount.displayName,
+        authorId: rootGetters.userAccount.userId,
         content: messageData.text,
-        authorImage: rootState.auth.user.photoURL,
+        authorImage: rootGetters.userAccount.image,
         date: Date.now(),
         messageId: ref.id,
         likes: [],
@@ -54,8 +56,8 @@ export default {
       }
     },
 
-    async likeMessage({ state, rootState, commit }, messageId) {
-      const userId = rootState.auth.user.uid
+    async likeMessage({ state, rootGetters, commit }, messageId) {
+      const userId = rootGetters.userAccount.userId
       const docRef = await fireDb.collection("messages")
         .doc(`/${messageId}`)
         .get()
@@ -69,8 +71,8 @@ export default {
 
     },
 
-    async removeLikeMessage({ state, rootState, commit }, { messageId, likeId }) {
-      const userId = rootState.auth.user.uid
+    async removeLikeMessage({ state, rootGetters, commit }, { messageId, likeId }) {
+      const userId = rootGetters.userAccount.userId
       const docRef = await fireDb.collection("messages")
         .doc(`/${messageId}`)
         .get()
@@ -82,8 +84,8 @@ export default {
         .update({ likes: _.without(existingLikes, userId) })
     },
 
-    async dislikeMessage({ state, rootState, commit }, messageId) {
-      const userId = rootState.auth.user.uid
+    async dislikeMessage({ state, rootGetters, commit }, messageId) {
+      const userId = rootGetters.userAccount.userId
       const docRef = await fireDb.collection("messages")
         .doc(`/${messageId}`)
         .get()
@@ -96,8 +98,8 @@ export default {
         .update({ dislikes: _.concat(existingDislikes, userId) })
     },
 
-    async removeDislikeMessage({ state, rootState, commit }, { messageId, dislikeId }) {
-      const userId = rootState.auth.user.uid
+    async removeDislikeMessage({ state, rootGetters, commit }, { messageId, dislikeId }) {
+      const userId = rootGetters.userAccount.userId
       const docRef = await fireDb.collection("messages")
         .doc(`/${messageId}`)
         .get()

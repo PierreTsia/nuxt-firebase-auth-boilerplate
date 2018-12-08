@@ -7,12 +7,18 @@ import { fireDb } from '~/plugins/firebase'
 
 
 function createNewAccount(user) {
-  fireDb.collection('accounts')
-    .doc(`${user.uid}`)
+  console.log("​createNewAccount -> user", user)
+  const { displayName, email, uid, photoURL } = user
+  console.log("​createNewAccount -> uid", uid)
+  console.log("​createNewAccount -> email", email)
+  console.log("​createNewAccount -> displayName", displayName)
+  return fireDb.collection('accounts')
+    .doc(`${uid}`)
     .set({
-      displayName: user.displayName || user.email.split("@")[0],
-      email: user.email,
-      image: user.newImage || "/images/default-profile.png"
+      displayName: displayName || email.split("@")[0],
+      email: email,
+      image: photoURL || "/images/default-profile.png",
+      userId: uid,
     })
 }
 
@@ -21,14 +27,18 @@ export default {
   state: {
     user: null,
     accounts: [],
+
   },
   getters: {
     isAuthenticated: state => !!state.user,
-    user: state => state.user
+    user: state => state.user,
+    userAccount: state => state.accounts.find(acc => acc.userId === state.user.userId)
   },
   mutations: {
     setUser(state, user) {
-      state.user = user;
+      const { uid } = user
+
+      state.user = { userId: uid }
 
       // return this.dispatch("setAccountRef");
     },
@@ -41,12 +51,13 @@ export default {
     resetUser({ state }) {
       state.user = null;
     },
-    userCreate({ state }, account) {
+    userCreate({ state, commit }, account) {
       return firebase
         .auth()
         .createUserWithEmailAndPassword(account.email, account.password)
-        .then(user => {
-          return createNewAccount(user);
+        .then(response => {
+          createNewAccount(response.user);
+          return commit("setUser", response.user);
         });
     },
     userGoogleLogin({ commit }) {
@@ -88,12 +99,13 @@ export default {
           console.log(error);
         });
     },
-    userLogin({ state }, account) {
+    userLogin({ state, commit }, account) {
       return firebase
         .auth()
         .signInWithEmailAndPassword(account.email, account.password)
         .then(user => {
-          return this.dispatch("setUser", user);
+          console.log("​userLogin -> user", user)
+          return commit("setUser", user.user);
         });
     },
     userLogout({ state }) {

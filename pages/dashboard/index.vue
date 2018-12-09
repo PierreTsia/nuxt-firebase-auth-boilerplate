@@ -1,8 +1,8 @@
 <template>
   <div class="dashboard container">
     <div class="tile is-ancestor">
-      <div class="tile is-parent is-8">
-        <UserCard :user="userAccount" />
+      <div v-if="userAccount" class="tile is-parent is-8">
+        <UserCard   :user="userAccount" />
       </div>
 
       <div class="tile is-parent">
@@ -88,6 +88,10 @@ export default {
   },
   data() {
     return {};
+  },
+  methods: {
+   
+  
   },
   computed: {
     ...mapGetters(["userAccount"]),

@@ -13,6 +13,16 @@ import IconClose from "./close";
 import IconDelete from "./delete";
 import IconStop from "./stop";
 import IconView from "./view";
+import IconChevronDown from "./chevronDown";
+import IconChevronUp from "./chevronUp";
+import IconCog from "./cog";
+import IconDots from "./dots";
+import IconAccount from "./account";
+
+
+
+
+
 
 
 
@@ -31,5 +41,10 @@ export {
   IconClose,
   IconDelete,
   IconStop,
-  IconView
+  IconView,
+  IconChevronDown,
+  IconChevronUp,
+  IconCog,
+  IconDots,
+  IconAccount
 };

@@ -16,7 +16,7 @@
       </div>
     </div>
     <div ref="messagesFeed" v-else>
-      <ChatMessage @imageClick="activateModal" :id="message.messageId" v-for="message in sortedMessages" :key="message.messageId" :message="message" />
+      <ChatMessage @imageClick="activateModal" :id="message.messageId" v-for="message in allMessages" :key="message.messageId" :message="message" />
     </div>
   </div>
 </template>
@@ -39,10 +39,10 @@ export default {
     ChatMessage,
   },
   computed: {
-    ...mapGetters(["sortedMessages"]),
-
+    ...mapGetters(["allMessages"]),
+    
     noMessages() {
-      return !this.sortedMessages.length;
+      return !this.allMessages.length;
     },
   },
 

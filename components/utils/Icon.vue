@@ -22,6 +22,11 @@ export default {
   height: 18px;
   width: 18px;
 }
+
+.icon-medium {
+  height: 35px;
+  width: 35px;
+}
 .icon-big {
   height: 50px;
   width: 50px;
@@ -55,5 +60,9 @@ export default {
 .icon-white {
   fill: white;
   stroke: white;
+}
+
+.icon-grey{
+  fill: 	#909090;
 }
 </style>

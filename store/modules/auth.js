@@ -7,11 +7,7 @@ import { fireDb } from '~/plugins/firebase'
 
 
 function createNewAccount(user) {
-  console.log("​createNewAccount -> user", user)
   const { displayName, email, uid, photoURL } = user
-  console.log("​createNewAccount -> uid", uid)
-  console.log("​createNewAccount -> email", email)
-  console.log("​createNewAccount -> displayName", displayName)
   return fireDb.collection('accounts')
     .doc(`${uid}`)
     .set({
@@ -116,13 +112,15 @@ export default {
           this.dispatch("resetUser");
         });
     },
-    userUpdate({ state }, newData) {
-      return firebase
-        .database()
-        .ref(`accounts/${state.user.uid}`)
-        .update({
-          displayName: newData.displayName
-        });
+    userUpdate({ state }, newUserData) {
+      console.log("​userUpdate -> newUserData", newUserData)
+      const { displayName, userId } = newUserData
+      console.log("​userUpdate -> userId", userId)
+      console.log("​userUpdate -> displayName", displayName)
+      return fireDb
+        .collection('accounts')
+        .doc(userId)
+        .update({ displayName })
     },
     userUpdateImage({ state }, image) {
       return firebase

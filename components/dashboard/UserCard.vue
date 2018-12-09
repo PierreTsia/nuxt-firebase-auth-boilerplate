@@ -133,11 +133,9 @@ export default {
   methods: {
     ...mapActions({ userUpdate: "userUpdate" }),
     handleDropDownClick() {
-      console.log("pouet");
       this.displayDropdown = !this.displayDropdown;
     },
     handleDropDownItemClick(change) {
-      console.log("from parent", change);
       switch (change) {
         case "userImg":
           this.handleImageUpdate();
@@ -147,8 +145,9 @@ export default {
           break;
       }
     },
-    handleImageUpdate() {
-      console.log("chnage Image");
+    handleImageUpdate(e) {
+      console.log("pouet", e);
+      this.$emit("onImageChange", e);
     },
 
     handleUserNameUpdate() {

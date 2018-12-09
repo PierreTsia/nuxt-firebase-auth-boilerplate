@@ -38,6 +38,7 @@ export default {
 
 
       if (messageData.img) {
+        console.log("​postMessage -> messageData.img", messageData.img)
         const storageRef = firebase.storage().ref(`chat/${ref.id}/`);
         const storedImg = await storageRef
           .child(`images/${messageData.img.name}`)

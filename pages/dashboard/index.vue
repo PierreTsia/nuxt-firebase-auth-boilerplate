@@ -2,7 +2,32 @@
   <div class="dashboard container">
     <div class="tile is-ancestor">
       <div v-if="userAccount" class="tile is-parent is-8">
-        <UserCard   :user="userAccount" />
+        <UserCard @onImageChange="handleDisplayImgModal" :user="userAccount" />
+        <div :class="['modal', {'is-active': displayImgModal}]">
+          <div class="modal-background"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Change profile picture</p>
+              <button @click="handleCloseModal" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+              <div class="modal__avatar container">
+                <Avatar v-if="!isEdited" :imgUrl="userAccount.image" size="big" />
+                <Avatar v-else :imgUrl="tempUserImageUrl" size="big" />
+
+                <a @click="handleUploadNewUserImageClick" class="button is-info is-rounded">
+                  <span>Upload</span>
+                  <IconUpload class="icon icon-normal icon-white" />
+                  <input id="imageInput" class="input" type="file" accept="image/*" placeholder="Image" v-on:change="uploadNewUserImage" ref="imageInput">
+                </a>
+              </div>
+            </section>
+            <footer class="modal-card-foot">
+              <button @click="handleConfirmNewUserImageClick" class="button is-success">Confirm</button>
+              <button @click="handleCloseModal" class="button">Cancel</button>
+            </footer>
+          </div>
+        </div>
       </div>
 
       <div class="tile is-parent">
@@ -80,21 +105,59 @@
 </template>
 <script>
 import UserCard from "~/components/dashboard/UserCard.vue";
-import { mapGetters } from "vuex";
+import Avatar from "~/components/base/Avatar.vue";
+import { IconUpload } from "~/components/utils/icons";
+import { mapGetters, mapActions } from "vuex";
 export default {
   name: "dashboard",
   components: {
     UserCard,
+    Avatar,
+    IconUpload,
   },
   data() {
-    return {};
+    return {
+      displayImgModal: false,
+      tempUserImageUrl: "",
+    };
   },
   methods: {
-   
-  
+    ...mapActions({ userUpdateImage: "userUpdateImage" }),
+    handleDisplayImgModal() {
+      this.displayImgModal = true;
+    },
+    handleCloseModal() {
+      this.displayImgModal = false;
+      this.tempUserImageUrl = "";
+    },
+    handleUploadNewUserImageClick() {
+      this.$refs.imageInput.click();
+    },
+    uploadNewUserImage() {
+      const img = this.$refs.imageInput.files[0];
+      console.log("​uploadNewUserImage -> img", img);
+      this.tempUserImageUrl = URL.createObjectURL(img);
+      console.log(
+        "​uploadNewUserImage -> this.tempUserImageUrl",
+        this.tempUserImageUrl,
+      );
+    },
+    handleConfirmNewUserImageClick() {
+      this.userUpdateImage({
+        image: this.$refs.imageInput.files[0],
+        userId: this.userAccount.userId,
+      });
+      this.displayImgModal = false;
+    },
   },
   computed: {
     ...mapGetters(["userAccount"]),
+    isEdited() {
+      return this.tempUserImageUrl.length;
+    },
+  },
+  mounted() {
+    this.tempUserImageUrl = "";
   },
 };
 </script>
@@ -102,6 +165,20 @@ export default {
 .dashboard {
   min-height: 95vh;
   padding-top: 10px;
+}
+
+.modal__avatar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  .button {
+    margin-top: 20px;
+  }
+  #imageInput {
+    display: none;
+  }
 }
 </style>
 

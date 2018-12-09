@@ -56,7 +56,7 @@ export default {
           return commit("setUser", response.user);
         });
     },
-    userGoogleLogin({ commit }) {
+    async userGoogleLogin({ commit }) {
       firebase.auth().useDeviceLanguage();
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.addScope("https://www.googleapis.com/auth/plus.login");
@@ -67,10 +67,23 @@ export default {
         .auth()
         .signInWithPopup(provider)
         .then(result => {
-          createNewAccount({
-            newImage: result.additionalUserInfo.profile.picture,
-            ...result.user
-          });
+          console.log("​userGoogleLogin -> result", result)
+          const newImage = result.additionalUserInfo.profile.picture;
+          const userId = result.user.uid;
+          const user = result.user
+          const ref = fireDb.collection('accounts')
+          ref.doc(userId).get()
+            .then(res => {
+              const existingAccount = res.data()
+              if (!existingAccount) {
+                createNewAccount({
+                  newImage,
+                  ...user
+                })
+              }
+            })
+
+          /*  ; */
           return commit("setUser", result.user);
         })
         .catch(error => {
@@ -85,10 +98,21 @@ export default {
         .auth()
         .signInWithPopup(provider)
         .then(result => {
-          createNewAccount({
-            newImage: result.additionalUserInfo.profile.avatar_url,
-            ...result.user
-          });
+          const userId = result.user.uid;
+          const user = result.user;
+          const newImage = result.additionalUserInfo.profile.avatar_url
+          const ref = fireDb.collection('accounts')
+          ref.doc(userId).get()
+            .then(res => {
+              const existingAccount = res.data()
+              if (!existingAccount) {
+                createNewAccount({
+                  newImage,
+                  ...user
+                })
+              }
+            })
+
           return commit("setUser", result.user);
         })
         .catch(error => {
@@ -115,20 +139,21 @@ export default {
     userUpdate({ state }, newUserData) {
       console.log("​userUpdate -> newUserData", newUserData)
       const { displayName, userId } = newUserData
-      console.log("​userUpdate -> userId", userId)
-      console.log("​userUpdate -> displayName", displayName)
       return fireDb
         .collection('accounts')
         .doc(userId)
         .update({ displayName })
     },
-    userUpdateImage({ state }, image) {
-      return firebase
-        .database()
-        .ref(`accounts/${state.user.uid}`)
-        .update({
-          image
-        });
+    async userUpdateImage({ state }, imageData) {
+      const storageRef = firebase.storage().ref(`accounts/${imageData.userId}`);
+      const storedImg = await storageRef
+        .child('profile')
+        .put(imageData.image)
+
+      const url = await storageRef.child('profile').getDownloadURL()
+      const img = await { url, fullPath: storedImg.ref.fullPath }
+      const userAccountRef = await fireDb.collection('accounts').doc(imageData.userId)
+      return userAccountRef.update({ image: img.url })
     },
 
   }

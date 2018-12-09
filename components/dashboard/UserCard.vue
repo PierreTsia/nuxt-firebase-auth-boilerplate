@@ -132,9 +132,7 @@ export default {
 
   methods: {
     ...mapActions({ userUpdate: "userUpdate" }),
-    handleDropDownClick() {
-      this.displayDropdown = !this.displayDropdown;
-    },
+
     handleDropDownItemClick(change) {
       switch (change) {
         case "userImg":
@@ -169,6 +167,9 @@ export default {
         this.userUpdate(newUserData);
         this.userNameEdited = false;
       }
+    },
+    handleDropDownClick() {
+      this.displayDropdown = !this.displayDropdown;
     },
 
     close(e) {

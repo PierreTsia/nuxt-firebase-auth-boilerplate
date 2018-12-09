@@ -15,6 +15,7 @@ function createNewAccount(user) {
       email: email,
       image: photoURL || "/images/default-profile.png",
       userId: uid,
+      profileId: null,
     })
 }
 

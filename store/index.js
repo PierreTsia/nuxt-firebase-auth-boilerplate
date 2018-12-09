@@ -1,7 +1,7 @@
 import Vuex from "vuex";
 import auth from './modules/auth'
 import messages from './modules/messages'
-import todos from './modules/todos'
+import profiles from './modules/profiles'
 import { firebaseMutations } from "vuexfire";
 
 
@@ -11,7 +11,7 @@ const createStore = () => {
     modules: {
       auth,
       messages,
-      todos
+      profiles
     },
     mutations: {
       ...firebaseMutations

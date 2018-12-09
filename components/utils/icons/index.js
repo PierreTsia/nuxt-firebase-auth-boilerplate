@@ -18,6 +18,8 @@ import IconChevronUp from "./chevronUp";
 import IconCog from "./cog";
 import IconDots from "./dots";
 import IconAccount from "./account";
+import IconPlanet from "./planet";
+
 
 
 
@@ -46,5 +48,6 @@ export {
   IconChevronUp,
   IconCog,
   IconDots,
-  IconAccount
+  IconAccount,
+  IconPlanet
 };

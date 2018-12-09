@@ -10,14 +10,13 @@ export default {
   },
   getters: {
     allMessages: state => state.messages,
-    sortedMessages: state => state.messages.sort((msgA, msgB) => msgA.date < msgB.date ? 1 : -1),
   },
   mutations: {
 
   },
   actions: {
     setMessagesRef: firebaseAction(({ bindFirebaseRef }) => {
-      const ref = fireDb.collection("messages")
+      const ref = fireDb.collection("messages").orderBy("date", "desc")
       return bindFirebaseRef("messages", ref);
     }),
 

@@ -15,7 +15,7 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu__userBio" role="menu">
               <div class="dropdown-content">
-                <a class="dropdown-item">
+                <a @click="handleEditClick('bio')" class="dropdown-item">
                   <IconPencil class="icon icon-small" />
                   <span>Edit your bio</span>
                 </a>
@@ -23,11 +23,10 @@
                   <IconPlanet class="icon icon-small" />
                   <span> Manage your social accounts</span>
                 </a>
-              
+
                 <hr class="dropdown-divider">
                 <a href="#" class="dropdown-item">
-                  <IconDelete class="icon icon-small" />
-                  Delete your bio
+                  <IconDelete class="icon icon-small" /> Delete your bio
                 </a>
               </div>
             </div>
@@ -38,7 +37,22 @@
 
       <p class="subtitle">Tell a few words about yourself</p>
       <div class="content">
-        <p>{{bio}}</p>
+        <p v-if="!sectionIsEdited('bio') && userHasABio">{{bio}}</p>
+        <p v-if="!sectionIsEdited('bio') && !userHasABio">Drop a few lines here...</p>
+
+        <div v-else-if="sectionIsEdited('bio')" class="field">
+          <div class="control">
+            <textarea v-model="newUserBio" class="textarea is-small" placeholder="Small textarea"></textarea>
+            <a @click="handleEditBioClick" class="button mt-2 is-small is-link is-rounded">
+              <IconSave class='icon icon-white' />
+              <small class="ml-1">Save</small>
+            </a>
+            <a @click="handleCancelBioClick" class="button mt-2 ml-1 is-small is-danger is-rounded">
+              <IconCancel class='icon icon-white' />
+              <small class="ml-1">Cancel</small>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
     <p class="subtitle">Social Profiles</p>
@@ -49,30 +63,74 @@
 
 </template>
 <script>
-import { IconDots, IconPencil, IconPlanet, IconDelete } from "~/components/utils/icons";
+import {
+  IconDots,
+  IconPencil,
+  IconPlanet,
+  IconDelete,
+  IconSave,
+  IconCancel,
+} from "~/components/utils/icons";
+
+import _ from "lodash";
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   components: {
     IconDots,
     IconPencil,
     IconPlanet,
-    IconDelete
+    IconDelete,
+    IconSave,
+    IconCancel,
   },
   props: {
     bio: {
       type: String,
-      default:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam semper diam at erat pulvinar, at pulvinar felis blandit. Vestibulum volutpat tellus diam, consequat gravida libero rhoncus ut. Morbi maximus, leo sit amet vehicula eleifend, nunc dui porta orci, quis semper odio felis ut quam.",
+      default: "Enter your bio",
     },
   },
   data() {
     return {
       displayDropdown: false,
+      isEditMode: [],
+      newUserBio: "",
     };
   },
   methods: {
+    ...mapActions(["updateUserBio", "createUserBio"]),
     handleDropDownClick() {
       this.displayDropdown = !this.displayDropdown;
     },
+    sectionIsEdited(section) {
+      return this.isEditMode.includes(section);
+    },
+    handleEditClick(section) {
+      this.isEditMode.push(section);
+    },
+    handleEditBioClick() {
+      if (this.newUserBio.length > 5) {
+        if (this.userHasABio) {
+          this.updateUserBio({
+            userId: this.user.userId,
+            bio: this.newUserBio,
+          });
+        } else {
+          this.createUserBio({
+            userId: this.user.userId,
+            bio: this.newUserBio,
+          });
+        }
+        this.isEditMode = _.remove(this.isEditMode, "bio");
+      }
+    },
+
+    handleCancelBioClick() {
+      if (this.isEditMode.includes("bio")) {
+        this.isEditMode = _.remove(this.isEditMode, "bio");
+      }
+    },
+
     close(e) {
       e.stopPropagation();
 
@@ -83,7 +141,16 @@ export default {
       }
     },
   },
+  computed: {
+    ...mapGetters(["user", "currentUserProfile"]),
+    userHasABio() {
+      return this.currentUserProfile && this.currentUserProfile.bio;
+    },
+  },
   mounted() {
+    if (this.currentUserProfile && this.currentUserProfile.bio) {
+      this.newUserBio = this.currentUserProfile.bio;
+    }
     window.addEventListener("click", this.close);
   },
 };

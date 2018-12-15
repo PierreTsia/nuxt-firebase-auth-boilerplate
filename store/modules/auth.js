@@ -8,15 +8,22 @@ import { fireDb } from '~/plugins/firebase'
 
 function createNewAccount(user) {
   const { displayName, email, uid, photoURL } = user
-  return fireDb.collection('accounts')
+  fireDb.collection('accounts')
     .doc(`${uid}`)
     .set({
       displayName: displayName || email.split("@")[0],
       email: email,
       image: photoURL || "/images/default-profile.png",
       userId: uid,
-      profileId: null,
     })
+
+  fireDb.collection('profiles')
+    .doc(`${uid}`)
+    .set({
+      userId: uid,
+    })
+
+
 }
 
 
@@ -138,7 +145,6 @@ export default {
         });
     },
     userUpdate({ state }, newUserData) {
-      console.log("​userUpdate -> newUserData", newUserData)
       const { displayName, userId } = newUserData
       return fireDb
         .collection('accounts')

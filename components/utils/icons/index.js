@@ -19,13 +19,8 @@ import IconCog from "./cog";
 import IconDots from "./dots";
 import IconAccount from "./account";
 import IconPlanet from "./planet";
-
-
-
-
-
-
-
+import IconSave from "./save";
+import IconCancel from "./cancel";
 
 
 export {
@@ -49,5 +44,7 @@ export {
   IconCog,
   IconDots,
   IconAccount,
-  IconPlanet
+  IconPlanet,
+  IconSave,
+  IconCancel
 };

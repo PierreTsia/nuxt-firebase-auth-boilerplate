@@ -60,7 +60,7 @@
         </div>
       </div>
       <div class="tile is-parent is-vertical">
-        <UserBio/>
+        <UserBio :bio="currentUserProfile.bio" />
         <UserNotifications/>
 
       </div>
@@ -101,6 +101,7 @@ import { IconUpload } from "~/components/utils/icons";
 import { mapGetters, mapActions } from "vuex";
 export default {
   name: "dashboard",
+  middleware: "bindProfilesRef",
   components: {
     UserCard,
     UserBio,
@@ -116,7 +117,10 @@ export default {
     };
   },
   methods: {
-    ...mapActions({ userUpdateImage: "userUpdateImage" }),
+    ...mapActions({
+      userUpdateImage: "userUpdateImage",
+      unbindCurrentUserProfile: "unbindCurrentUserProfile",
+    }),
     handleDisplayImgModal() {
       this.displayImgModal = true;
     },
@@ -145,13 +149,16 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["userAccount"]),
+    ...mapGetters(["userAccount", "currentUserProfile"]),
     isEdited() {
       return this.tempUserImageUrl.length;
     },
   },
   mounted() {
     this.tempUserImageUrl = "";
+  },
+  beforeDestroy() {
+    this.unbindCurrentUserProfile();
   },
 };
 </script>
@@ -160,10 +167,8 @@ export default {
   min-height: 95vh;
   padding-top: 10px;
   .is-ancestor {
-    border: 1px solid red;
   }
   .is-parent {
-    border: 1px solid green;
   }
 }
 

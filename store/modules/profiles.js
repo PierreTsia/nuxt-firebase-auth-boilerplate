@@ -1,20 +1,17 @@
 
 import { firebaseAction } from "vuexfire";
-import { fireDb } from '~/plugins/firebase'
-
-
-
-
-
+import { fireDb } from '~/plugins/firebase';
 
 export default {
   state: {
     profiles: [],
-    currentUserProfile: {}
+    currentUserProfile: {},
+    socialAccounts: [],
   },
   getters: {
     allProfiles: state => state.profiles,
-    currentUserProfile: state => state.currentUserProfile
+    currentUserProfile: state => state.currentUserProfile,
+    userSocialAccounts: state => state.socialAccounts,
   },
 
   actions: {
@@ -25,10 +22,13 @@ export default {
     }),
 
     setCurrentUserProfile: firebaseAction(({ bindFirebaseRef }, ref) => {
-      console.log("​ref", ref)
       if (ref) {
         bindFirebaseRef('currentUserProfile', ref)
       }
+    }),
+
+    setSocialAccounts: firebaseAction(({ bindFirebaseRef }, ref) => {
+      bindFirebaseRef('socialAccounts', ref)
     }),
 
     unbindCurrentUserProfile: firebaseAction(({ unbindFirebaseRef }) => {
@@ -54,11 +54,33 @@ export default {
         .doc(userId)
 
       if (userProfile) {
-        userProfile.set({ bio, userId })
+        userProfile.update({ bio, userId })
       }
     },
 
+    async createUserSocialAccount({ state, rootGetters }, socialAccountData) {
+      console.log("​createUserSocialAccount -> socialAccountData", socialAccountData)
+      const userId = rootGetters.user.userId
 
+      socialAccountData.forEach(account => {
+        const provider = Object.keys(account)[0]
+        const url = account[provider]
+        console.log("​createUserSocialAccount -> url", url)
+        console.log("​createUserSocialAccount -> provider", provider)
+        fireDb
+          .collection('profiles')
+          .doc(userId)
+          .collection('socials')
+          .doc(provider)
+          .set({ provider, url })
+      })
+
+
+      /*  fireDb
+         .collection('profiles')
+         .doc(userId)
+         .collection('socials') */
+    }
 
   }
 

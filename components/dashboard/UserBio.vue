@@ -19,7 +19,8 @@
                   <IconPencil class="icon icon-small" />
                   <span>Edit your bio</span>
                 </a>
-                <a class="dropdown-item">
+                <a @click="handleEditClick('social')"  
+                  class="dropdown-item">
                   <IconPlanet class="icon icon-small" />
                   <span> Manage your social accounts</span>
                 </a>
@@ -47,7 +48,7 @@
               <IconSave class='icon icon-white' />
               <small class="ml-1">Save</small>
             </a>
-            <a @click="handleCancelBioClick" class="button mt-2 ml-1 is-small is-danger is-rounded">
+            <a @click="removeSectionFromEditMode('bio')" class="button mt-2 ml-1 is-small is-danger is-rounded">
               <IconCancel class='icon icon-white' />
               <small class="ml-1">Cancel</small>
             </a>
@@ -57,8 +58,69 @@
     </div>
     <p class="subtitle">Social Profiles</p>
     <div class="content">
-      <p>Twitter, Instagram, Facebook</p>
+      
+      <div v-if="sectionIsEdited('social')">
+        <div class="field">
+          <div class="control social__input__container">
+            <IconGithub class="icon icon-medium" />
+            <input class="input is-info" v-model="github" type="text" placeholder="your github account">
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="control social__input__container">
+            <IconGoogle class="icon icon-danger icon-medium" />
+            <input class="input is-info" v-model="google" type="text" placeholder="your google account">
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="control social__input__container">
+            <IconTwitter class="icon icon-info icon-medium" />
+            <input class="input is-info" v-model="twitter" type="text" placeholder="your twitter account">
+          </div>
+        </div>
+
+          <div class="field">
+          <div class="control social__input__container">
+            <IconFacebook class="icon icon-info icon-medium" />
+            <input class="input is-info" v-model="facebook" type="text" placeholder="your facebook account">
+          </div>
+        </div>
+
+         <div class="field">
+          <div class="control social__input__container">
+            <IconInstagram class="icon icon-medium" />
+            <input class="input is-info" v-model="instagram" type="text" placeholder="your instagram account">
+          </div>
+        </div>
+
+        <div class="control">
+            <a @click="handleEditSocialClick" class="button mt-2 is-small is-link is-rounded">
+              <IconSave class='icon icon-white' />
+              <small class="ml-1">Save</small>
+            </a>
+            <a @click="removeSectionFromEditMode('social')" class="button mt-2 ml-1 is-small is-danger is-rounded">
+              <IconCancel class='icon icon-white' />
+              <small class="ml-1">Cancel</small>
+            </a>
+        </div>
+      </div>
+      <div v-else>
+        <div class="control">
+          <div v-if="currentUserProfile.socials">
+            <a :href="social.url" v-for="social in userSocialAccounts" class="button mt-2 ml-1  is-primary p-3">
+              <IconGithub v-if="social.provider === 'github'" class='icon icon-medium icon-white' />
+              <IconTwitter v-if="social.provider === 'twitter'" class='icon icon-medium icon-white' />
+              <IconGoogle v-if="social.provider === 'google'" class='icon icon-medium icon-white' />
+              <IconFacebook v-if="social.provider === 'facebook'" class='icon icon-medium icon-white' />
+              <IconInstagram v-if="social.provider === 'instagram'" class='icon icon-medium icon-white' />
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
+
   </article>
 
 </template>
@@ -70,6 +132,11 @@ import {
   IconDelete,
   IconSave,
   IconCancel,
+  IconGoogle,
+  IconGithub,
+  IconTwitter,
+  IconFacebook,
+  IconInstagram
 } from "~/components/utils/icons";
 
 import _ from "lodash";
@@ -83,6 +150,11 @@ export default {
     IconDelete,
     IconSave,
     IconCancel,
+    IconGoogle,
+    IconGithub,
+    IconTwitter,
+    IconFacebook,
+    IconInstagram
   },
   props: {
     bio: {
@@ -95,15 +167,25 @@ export default {
       displayDropdown: false,
       isEditMode: [],
       newUserBio: "",
+      twitter:"",
+      google:"",
+      github:"",
+      facebook: "",
+      instagram: "" 
     };
   },
   methods: {
-    ...mapActions(["updateUserBio", "createUserBio"]),
+    ...mapActions(["updateUserBio", "createUserBio", "updateUserSocialAccount", "createUserSocialAccount"]),
     handleDropDownClick() {
       this.displayDropdown = !this.displayDropdown;
     },
     sectionIsEdited(section) {
       return this.isEditMode.includes(section);
+    },
+    removeSectionFromEditMode(section){
+      if(this.isEditMode.includes(section)){
+         this.isEditMode = _.remove(this.isEditMode, section);
+      }
     },
     handleEditClick(section) {
       this.isEditMode.push(section);
@@ -121,15 +203,22 @@ export default {
             bio: this.newUserBio,
           });
         }
-        this.isEditMode = _.remove(this.isEditMode, "bio");
+        this.removeSectionFromEditMode('bio')
       }
     },
 
-    handleCancelBioClick() {
-      if (this.isEditMode.includes("bio")) {
-        this.isEditMode = _.remove(this.isEditMode, "bio");
-      }
-    },
+
+    handleEditSocialClick(){
+     const newSocialAccountData = _.reduce({ twitter: this.twitter, google: this.google, github: this.github, facebook: this.facebook, instagram: this.instagram }, (result, url, provider) => {
+       if(url.length){
+         // TODO handle validation rules here
+         result.push({[provider]: url})
+       }
+       return result
+     }, [])
+      this.createUserSocialAccount(newSocialAccountData)
+      this.removeSectionFromEditMode('socials')
+    }, 
 
     close(e) {
       e.stopPropagation();
@@ -142,15 +231,44 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["user", "currentUserProfile"]),
+    ...mapGetters(["user", "currentUserProfile", "userSocialAccounts"]),
     userHasABio() {
       return this.currentUserProfile && this.currentUserProfile.bio;
     },
+    userHasSocialAccounts(){
+      return this.userSocialAccounts.length > 0
+    },
+   
   },
   mounted() {
     if (this.currentUserProfile && this.currentUserProfile.bio) {
       this.newUserBio = this.currentUserProfile.bio;
+    } 
+    if(this.userHasSocialAccounts){
+      this.userSocialAccounts.forEach(social => {
+        if(social.provider === 'facebook'){
+          this.facebook = social.url
+        }
+        if(social.provider === 'google'){
+          this.google = social.url
+        }
+        if(social.provider === 'twitter'){
+          this.twitter = social.url
+        }
+        if(social.provider === 'github'){
+          this.github = social.url
+        }
+        if(social.provider === 'instagram'){
+          this.instagram = social.url
+        }
+
+
+
+
+        
+      })
     }
+    
     window.addEventListener("click", this.close);
   },
 };
@@ -186,6 +304,13 @@ export default {
     .icon {
       fill: white;
     }
+  }
+}
+.social__input__container {
+  display: flex;
+  align-items: center;
+  .icon {
+    margin-right: 5px;
   }
 }
 </style>

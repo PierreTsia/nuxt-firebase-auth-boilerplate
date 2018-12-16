@@ -14,6 +14,12 @@ export default async function ({ store }) {
         store.dispatch('setCurrentUserProfile', snapshot.ref)
       })
 
+    const socialsRef = await fireDb.collection('profiles').doc(userId).collection('socials')
+    store.dispatch('setSocialAccounts', socialsRef)
+
+
+
+
 
     // store.dispatch('setCurrentUserProfile', profileId)
     // store.dispatch('setProfilesRef')

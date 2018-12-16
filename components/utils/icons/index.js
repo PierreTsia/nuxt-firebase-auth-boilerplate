@@ -1,5 +1,7 @@
 import IconGithub from "./github";
 import IconGoogle from "./google";
+import IconFacebook from "./facebook";
+import IconInstagram from "./instagram";
 import IconLogin from "./login";
 import IconLogout from "./logout";
 import IconPencil from "./pencil";
@@ -21,11 +23,15 @@ import IconAccount from "./account";
 import IconPlanet from "./planet";
 import IconSave from "./save";
 import IconCancel from "./cancel";
+import IconTwitter from "./twitter";
+
 
 
 export {
   IconGithub,
   IconGoogle,
+  IconFacebook,  
+  IconInstagram,
   IconLogin,
   IconLogout,
   IconPencil,
@@ -46,5 +52,6 @@ export {
   IconAccount,
   IconPlanet,
   IconSave,
-  IconCancel
+  IconCancel,
+  IconTwitter
 };

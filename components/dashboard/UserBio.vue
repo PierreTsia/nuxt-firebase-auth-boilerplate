@@ -109,7 +109,7 @@
       <div v-else>
         <div class="control">
           <div v-if="currentUserProfile.socials">
-            <a :href="social.url" v-for="social in userSocialAccounts" class="button mt-2 ml-1  is-primary p-3">
+            <a :href="social.url" v-for="social in socialAccounts" class="button mt-2 ml-1  is-primary p-3">
               <IconGithub v-if="social.provider === 'github'" class='icon icon-medium icon-white' />
               <IconTwitter v-if="social.provider === 'twitter'" class='icon icon-medium icon-white' />
               <IconGoogle v-if="social.provider === 'google'" class='icon icon-medium icon-white' />
@@ -161,6 +161,10 @@ export default {
       type: String,
       default: "Enter your bio",
     },
+    socialAccounts: {
+      type: Array,
+      default: () => {}
+    }
   },
   data() {
     return {
@@ -217,7 +221,7 @@ export default {
        return result
      }, [])
       this.createUserSocialAccount(newSocialAccountData)
-      this.removeSectionFromEditMode('socials')
+      this.removeSectionFromEditMode('social')
     }, 
 
     close(e) {
@@ -231,7 +235,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["user", "currentUserProfile", "userSocialAccounts"]),
+    ...mapGetters(["user", "currentUserProfile"]),
     userHasABio() {
       return this.currentUserProfile && this.currentUserProfile.bio;
     },
@@ -240,36 +244,47 @@ export default {
     },
    
   },
+  watch: {
+    socialAccounts: {
+      immediate: true,
+      deep: true, 
+      handler(newVal){
+        newVal.forEach(account => {
+					console.log("​handler -> account", account)
+          if(account.provider === 'facebook'){
+            this.facebook = account.url
+          }
+          if(account.provider === 'google'){
+            this.google = account.url
+          }
+          if(account.provider === 'twitter'){
+             this.twitter = account.url
+          }
+          if(account.provider === 'github'){
+            this.github = account.url
+          }
+           if(account.provider === 'instagram'){
+            this.instagram = account.url
+          }
+        })
+      }
+    }
+  },
   mounted() {
     if (this.currentUserProfile && this.currentUserProfile.bio) {
       this.newUserBio = this.currentUserProfile.bio;
     } 
-    if(this.userHasSocialAccounts){
-      this.userSocialAccounts.forEach(social => {
-        if(social.provider === 'facebook'){
-          this.facebook = social.url
-        }
-        if(social.provider === 'google'){
-          this.google = social.url
-        }
-        if(social.provider === 'twitter'){
-          this.twitter = social.url
-        }
-        if(social.provider === 'github'){
-          this.github = social.url
-        }
-        if(social.provider === 'instagram'){
-          this.instagram = social.url
-        }
-
-
-
-
-        
-      })
-    }
+   
     
     window.addEventListener("click", this.close);
+  },
+  beforeDestroy() {
+    this.twitter="";
+    this.google="";
+    this.github="";
+    this.facebook= "";
+    this.instagram= ""; 
+    
   },
 };
 </script>

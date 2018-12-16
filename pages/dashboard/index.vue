@@ -60,7 +60,7 @@
         </div>
       </div>
       <div class="tile is-parent is-vertical">
-        <UserBio :bio="currentUserProfile.bio" />
+        <UserBio :bio="currentUserProfile.bio" :socialAccounts="userSocialAccounts" />
         <UserNotifications/>
 
       </div>
@@ -149,7 +149,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["userAccount", "currentUserProfile"]),
+    ...mapGetters(["userAccount", "currentUserProfile", "userSocialAccounts"]),
     isEdited() {
       return this.tempUserImageUrl.length;
     },

@@ -58,15 +58,13 @@ export default {
       }
     },
 
-    async createUserSocialAccount({ state, rootGetters }, socialAccountData) {
-      console.log("​createUserSocialAccount -> socialAccountData", socialAccountData)
+    async createUserSocialAccount({ rootGetters }, socialAccountData) {
       const userId = rootGetters.user.userId
 
       socialAccountData.forEach(account => {
         const provider = Object.keys(account)[0]
         const url = account[provider]
-        console.log("​createUserSocialAccount -> url", url)
-        console.log("​createUserSocialAccount -> provider", provider)
+
         fireDb
           .collection('profiles')
           .doc(userId)
@@ -74,12 +72,37 @@ export default {
           .doc(provider)
           .set({ provider, url })
       })
+    },
 
+    async updateUserTags({ rootGetters }, tags) {
+      const { newTags, existingTags } = tags
+      console.log("​updateUserTags -> existingTags", existingTags)
+      console.log("​updateUserTags -> newTags", newTags)
+      const savedTags = []
+      for (let tag of newTags) {
+        const existingTagsRef = await fireDb.collection('tags').get()
+        console.log("​updateUserTags -> existingTagsRef", existingTagsRef)
+        for (let doc of existingTagsRef.docs) {
+          const existingTag = doc.data()
+          if (existingTag.label === tag.label) {
+            console.log(`${tag.label} already exists dude!`)
+            savedTags.push(existingTag)
+            console.log('savedTags', savedTags)
+          } else {
+            const newTagRef = await fireDb.collection('tags').doc()
+            savedTags.push({ ...tag, tagId: newTagRef.id })
+            newTagRef.set({ ...tag, tagId: newTagRef.id })
 
-      /*  fireDb
-         .collection('profiles')
-         .doc(userId)
-         .collection('socials') */
+          }
+        }
+      }
+
+      const allTags = existingTags.concat(savedTags)
+      console.log("​updateUserTags -> allTags", allTags)
+      const userId = rootGetters.user.userId
+
+      await fireDb.collection('profiles').doc(userId).update({ tags: allTags })
+
     }
 
   }

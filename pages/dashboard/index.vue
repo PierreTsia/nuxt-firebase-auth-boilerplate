@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard container">
     <div class="tile is-ancestor">
-      <div v-if="userAccount" class="tile is-parent is-8">
+      <div v-if="userAccount" class="tile is-parent is-5">
         <UserCard @onImageChange="handleDisplayImgModal" :user="userAccount" />
         <div :class="['modal', {'is-active': displayImgModal}]">
           <div class="modal-background"></div>
@@ -31,13 +31,7 @@
       </div>
 
       <div class="tile is-parent">
-        <article class="tile is-child box">
-          <p class="title">Favorite categories</p>
-          <p class="subtitle">With some content</p>
-          <div class="content">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ornare magna eros, eu pellentesque tortor vestibulum ut. Maecenas non massa sem. Etiam finibus odio quis feugiat facilisis.</p>
-          </div>
-        </article>
+        <UserCategories/>
       </div>
     </div>
 
@@ -95,6 +89,8 @@ import UserCard from "~/components/dashboard/UserCard.vue";
 import UserBio from "~/components/dashboard/UserBio.vue";
 import UserNotifications from "~/components/dashboard/UserNotifications.vue";
 import UserSuggestions from "~/components/dashboard/UserSuggestions.vue";
+import UserCategories from "~/components/dashboard/UserCategories.vue";
+
 
 import Avatar from "~/components/base/Avatar.vue";
 import { IconUpload } from "~/components/utils/icons";
@@ -105,6 +101,7 @@ export default {
   components: {
     UserCard,
     UserBio,
+    UserCategories,
     UserNotifications,
     UserSuggestions,
     Avatar,

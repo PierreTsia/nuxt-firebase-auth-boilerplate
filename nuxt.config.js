@@ -27,6 +27,7 @@ module.exports = {
    ** Global CSS
    */
   css: [
+    "node_modules/vue-multiselect/dist/vue-multiselect.min.css",
     "~/assets/css/style.css",
     { src: "bulma/bulma.sass", lang: "sass" },
     { src: "font-awesome/scss/font-awesome.scss", lang: "scss" }

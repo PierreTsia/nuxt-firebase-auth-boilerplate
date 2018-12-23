@@ -24,6 +24,9 @@ import IconPlanet from "./planet";
 import IconSave from "./save";
 import IconCancel from "./cancel";
 import IconTwitter from "./twitter";
+import IconTags from "./tags";
+import IconEye from "./eye";
+
 
 
 
@@ -53,5 +56,7 @@ export {
   IconPlanet,
   IconSave,
   IconCancel,
-  IconTwitter
+  IconTwitter,
+  IconTags,
+  IconEye
 };

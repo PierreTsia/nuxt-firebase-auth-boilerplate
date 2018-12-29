@@ -62,7 +62,7 @@
             :multiple="true" 
             :loading="isLoading"
             :select-label="'add to your tags'"
-            :deselect-label="'add to your tags'"
+            :deselect-label="'remove'"
             :internal-search="false"
             :clear-on-select="false" 
             :close-on-select="true" 
@@ -173,8 +173,11 @@ export default{
 
     addTag(newTagLabel){
       const tag = {label: newTagLabel.toLowerCase(), color: this.pickRandomColor()}
-      this.selectedTags.push(tag)
-      this.suggestedTags.push(tag)
+      const userTagsLabels = this.userTags.map(t => t.label)
+      if(!userTagsLabels.includes(newTagLabel)){
+        this.selectedTags.push(tag)
+        this.suggestedTags.push(tag)
+      }
     },
 
     pickRandomColor(){

@@ -40,13 +40,14 @@
         <div class="tile">
 
           <div class="tile is-parent">
-            <article class="tile is-child box">
+            <UserGallery/>
+           <!--  <article class="tile is-child box">
               <p class="title">Gallery box</p>
               <p class="subtitle">Caroussel</p>
               <figure class="image is-4by3">
                 <img src="https://bulma.io/images/placeholders/640x480.png">
               </figure>
-            </article>
+            </article> -->
           </div>
         </div>
         <div class="tile is-parent is-12">
@@ -90,6 +91,8 @@ import UserBio from "~/components/dashboard/UserBio.vue";
 import UserNotifications from "~/components/dashboard/UserNotifications.vue";
 import UserSuggestions from "~/components/dashboard/UserSuggestions.vue";
 import UserCategories from "~/components/dashboard/UserCategories.vue";
+import UserGallery from "~/components/dashboard/UserGallery.vue";
+
 
 
 import Avatar from "~/components/base/Avatar.vue";
@@ -104,6 +107,7 @@ export default {
     UserCategories,
     UserNotifications,
     UserSuggestions,
+    UserGallery,
     Avatar,
     IconUpload,
   },

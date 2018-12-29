@@ -55,9 +55,11 @@ module.exports = {
     {
       src: '~/plugins/vue-toggle',
       ssr: false,
+    },
+    {
+      src: '~/plugins/vue-caroussel',
+      ssr: false,
     }
-
-
   ],
   /*
   ** Build configuration
